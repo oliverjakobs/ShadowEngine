@@ -1,0 +1,11 @@
+{
+	"textures": {
+		"player":	{ "path": "res/textures/player.png" },
+		"tree":	{ "path": "res/textures/tree.png" },
+		"box":	{ "path": "res/textures/box.png" }
+	},
+	"fonts": {
+		"font": { "path": "res/fonts/OpenSans.ttf", "size": 32.0 },
+		"gui": { "path": "res/fonts/ProggyTiny.ttf", "size": 16.0 }
+	}
+}

@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="res">
+      <UniqueIdentifier>{4FA5880B-BBAE-887C-442A-9F7CB032947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\fonts">
+      <UniqueIdentifier>{E81E0011-5489-B487-9DC7-652D097192DC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\shaders">
+      <UniqueIdentifier>{4841F028-B4F6-681E-3DEB-62F5A99F5F22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\textures">
+      <UniqueIdentifier>{227C1C83-0EDF-AB27-B764-E4DDA3A677AA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Application">
+      <UniqueIdentifier>{701253C7-DC9D-C08B-E5AE-438051B91C8C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Camera">
+      <UniqueIdentifier>{054BA008-F102-E255-5A0A-BBB146E17C46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Event">
+      <UniqueIdentifier>{3E1ADFB2-AA84-9329-F3C2-44CF5F6C717E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Graphics">
+      <UniqueIdentifier>{0D564864-F9B8-D708-A23E-10BF8E80A38B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Ignis">
+      <UniqueIdentifier>{36681FB3-A2D2-D329-EB10-85CF57BAB17E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Ignis\Core">
+      <UniqueIdentifier>{4E1E7098-3AEC-639E-2380-D4C40FED3F03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Ignis\glad">
+      <UniqueIdentifier>{FDCC8398-E99A-779E-D22E-E8C4BE9B5303}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Ignis\glad\KHR">
+      <UniqueIdentifier>{F111879F-DDF5-47F5-4656-424832593277}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Physics">
+      <UniqueIdentifier>{9F8B9316-0B41-0C0C-9435-06E300EA0210}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\clib">
+      <UniqueIdentifier>{D6512ECF-C21E-89DA-EB37-7782D763BE68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\json">
+      <UniqueIdentifier>{164732CF-0214-8DDA-2B2D-7B821759C268}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\math">
+      <UniqueIdentifier>{46A033CF-326D-8EDA-5B86-7C8247B2C368}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Application\Application.h">
+      <Filter>src\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Application\ApplicationCallback.h">
+      <Filter>src\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Application\Debugger.h">
+      <Filter>src\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Application\Input.h">
+      <Filter>src\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Application\Timer.h">
+      <Filter>src\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Application\defines.h">
+      <Filter>src\Application</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Camera\Camera.h">
+      <Filter>src\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Event\Event.h">
+      <Filter>src\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Event\EventHandler.h">
+      <Filter>src\Event</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Background.h">
+      <Filter>src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\BatchRenderer2D.h">
+      <Filter>src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\FontRenderer.h">
+      <Filter>src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Primitives2D.h">
+      <Filter>src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Renderer.h">
+      <Filter>src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\Renderer2D.h">
+      <Filter>src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Graphics\ResourceManager.h">
+      <Filter>src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ignis\Core\Buffer.h">
+      <Filter>src\Ignis\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ignis\Core\Shader.h">
+      <Filter>src\Ignis\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ignis\Core\Texture.h">
+      <Filter>src\Ignis\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ignis\Font.h">
+      <Filter>src\Ignis</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ignis\Framebuffer.h">
+      <Filter>src\Ignis</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ignis\Ignis.h">
+      <Filter>src\Ignis</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ignis\Quad.h">
+      <Filter>src\Ignis</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ignis\VertexArray.h">
+      <Filter>src\Ignis</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ignis\glad\KHR\khrplatform.h">
+      <Filter>src\Ignis\glad\KHR</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ignis\glad\glad.h">
+      <Filter>src\Ignis\glad</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ignis\stb_image.h">
+      <Filter>src\Ignis</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Ignis\stb_truetype.h">
+      <Filter>src\Ignis</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Physics\Body.h">
+      <Filter>src\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Physics\World.h">
+      <Filter>src\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Shadow.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\clib\clib.h">
+      <Filter>src\clib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\clib\hashmap.h">
+      <Filter>src\clib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\clib\vector.h">
+      <Filter>src\clib</Filter>
+    </ClInclude>
+    <ClInclude Include="src\json\tb_json.h">
+      <Filter>src\json</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\mat4.h">
+      <Filter>src\math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\math.h">
+      <Filter>src\math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\vec2.h">
+      <Filter>src\math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\vec3.h">
+      <Filter>src\math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stb_image_write.h">
+      <Filter>src</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Application\Application.c">
+      <Filter>src\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Application\ApplicationCallback.c">
+      <Filter>src\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Application\Input.c">
+      <Filter>src\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Application\Timer.c">
+      <Filter>src\Application</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Camera\Camera.c">
+      <Filter>src\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Event\EventHandler.c">
+      <Filter>src\Event</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Background.c">
+      <Filter>src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\BatchRenderer2D.c">
+      <Filter>src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\FontRenderer.c">
+      <Filter>src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Primitives2D.c">
+      <Filter>src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Renderer.c">
+      <Filter>src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\Renderer2D.c">
+      <Filter>src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Graphics\ResourceManager.c">
+      <Filter>src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ignis\Core\Buffer.c">
+      <Filter>src\Ignis\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ignis\Core\Shader.c">
+      <Filter>src\Ignis\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ignis\Core\Texture.c">
+      <Filter>src\Ignis\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ignis\Font.c">
+      <Filter>src\Ignis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ignis\Framebuffer.c">
+      <Filter>src\Ignis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ignis\Ignis.c">
+      <Filter>src\Ignis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ignis\Quad.c">
+      <Filter>src\Ignis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ignis\VertexArray.c">
+      <Filter>src\Ignis</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ignis\glad\glad.c">
+      <Filter>src\Ignis\glad</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Physics\Body.c">
+      <Filter>src\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Physics\World.c">
+      <Filter>src\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Shadow.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\clib\hashmap.c">
+      <Filter>src\clib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\clib\vector.c">
+      <Filter>src\clib</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\mat4.c">
+      <Filter>src\math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\vec2.c">
+      <Filter>src\math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\vec3.c">
+      <Filter>src\math</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="config.json" />
+    <None Include="res\fonts\JetBrainsMono-Regular.ttf">
+      <Filter>res\fonts</Filter>
+    </None>
+    <None Include="res\fonts\OpenSans.ttf">
+      <Filter>res\fonts</Filter>
+    </None>
+    <None Include="res\fonts\ProggyTiny.ttf">
+      <Filter>res\fonts</Filter>
+    </None>
+    <None Include="res\shaders\batchrenderer.frag">
+      <Filter>res\shaders</Filter>
+    </None>
+    <None Include="res\shaders\batchrenderer.vert">
+      <Filter>res\shaders</Filter>
+    </None>
+    <None Include="res\shaders\font.frag">
+      <Filter>res\shaders</Filter>
+    </None>
+    <None Include="res\shaders\font.vert">
+      <Filter>res\shaders</Filter>
+    </None>
+    <None Include="res\shaders\occlusion.frag">
+      <Filter>res\shaders</Filter>
+    </None>
+    <None Include="res\shaders\pass.vert">
+      <Filter>res\shaders</Filter>
+    </None>
+    <None Include="res\shaders\primitives.frag">
+      <Filter>res\shaders</Filter>
+    </None>
+    <None Include="res\shaders\primitives.vert">
+      <Filter>res\shaders</Filter>
+    </None>
+    <None Include="res\shaders\renderer2D.frag">
+      <Filter>res\shaders</Filter>
+    </None>
+    <None Include="res\shaders\renderer2D.vert">
+      <Filter>res\shaders</Filter>
+    </None>
+    <None Include="res\shaders\shadow.frag">
+      <Filter>res\shaders</Filter>
+    </None>
+    <None Include="res\shaders\shadow_map.frag">
+      <Filter>res\shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\textures\box.png">
+      <Filter>res\textures</Filter>
+    </Image>
+    <Image Include="res\textures\player.png">
+      <Filter>res\textures</Filter>
+    </Image>
+    <Image Include="res\textures\tree.png">
+      <Filter>res\textures</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
