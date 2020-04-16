@@ -10,7 +10,9 @@ Camera camera;
 ShadowEngine shadow;
 Light mouse_light;
 
-Light lights[4];
+#define LIGHT_COUNT	5
+
+Light lights[LIGHT_COUNT];
 
 typedef struct
 {
@@ -76,12 +78,11 @@ void OnInit(Application* app)
 
 	/* LIGHT */
 	ShadowEngineInit(&shadow);
-	ShadowEngineCreateLight(&mouse_light, 0.0f, 0.0f, 512.0f, IGNIS_WHITE);
-
-	ShadowEngineCreateLight(&lights[0], 160.0f, 240.0f, 256.0f, IGNIS_RED);
-	ShadowEngineCreateLight(&lights[1], 860.0f, 240.0f, 512.0f, IGNIS_BLUE);
-	ShadowEngineCreateLight(&lights[2], 620.0f, 540.0f, 512.0f, IGNIS_GREEN);
-	ShadowEngineCreateLight(&lights[3], 240.0f, 640.0f, 512.0f, IGNIS_YELLOW);
+	ShadowEngineCreateLight(&lights[0], 0.0f, 0.0f, 512.0f, IGNIS_WHITE);
+	ShadowEngineCreateLight(&lights[1], 160.0f, 240.0f, 256.0f, IGNIS_RED);
+	ShadowEngineCreateLight(&lights[2], 860.0f, 240.0f, 512.0f, IGNIS_BLUE);
+	ShadowEngineCreateLight(&lights[3], 620.0f, 540.0f, 512.0f, IGNIS_GREEN);
+	ShadowEngineCreateLight(&lights[4], 240.0f, 640.0f, 512.0f, IGNIS_YELLOW);
 }
 
 void OnDestroy(Application* app)
@@ -92,12 +93,12 @@ void OnDestroy(Application* app)
 	Renderer2DDestroy();
 
 	ShadowEngineDestroy(&shadow);
-	ShadowEngineDeleteLight(&mouse_light);
 
 	ShadowEngineDeleteLight(&lights[0]);
 	ShadowEngineDeleteLight(&lights[1]);
 	ShadowEngineDeleteLight(&lights[2]);
 	ShadowEngineDeleteLight(&lights[3]);
+	ShadowEngineDeleteLight(&lights[4]);
 }
 
 void OnEvent(Application* app, const Event e)
@@ -121,13 +122,13 @@ void OnEvent(Application* app, const Event e)
 void OnUpdate(Application* app, float deltaTime)
 {
 	vec2 pos = CameraGetMousePos(&camera, InputMousePositionVec2());
-	mouse_light.x = pos.x;
-	mouse_light.y = pos.y;
+	lights[0].x = pos.x;
+	lights[0].y = pos.y;
 }
 
-void RenderLight(Light* light)
+void ProcessLight(Light* light)
 {
-	ShadowEngineStart(&shadow, light);
+	ShadowEngineStartLight(&shadow, light);
 
 	/* Render occluders */
 	BatchRenderer2DStart(CameraGetViewProjectionPtr(&shadow.light_camera));
@@ -140,19 +141,11 @@ void RenderLight(Light* light)
 
 	BatchRenderer2DFlush();
 
-	ShadowEngineProcess(&shadow, light, CameraGetViewProjectionPtr(&camera));
-
-	ShadowEngineRender(&shadow, light, CameraGetViewProjectionPtr(&camera));
+	ShadowEngineProcessLight(&shadow, light, CameraGetViewProjectionPtr(&camera));
 }
 
 void OnRender(Application* app)
 {
-	RenderLight(&mouse_light);
-	RenderLight(&lights[0]);
-	RenderLight(&lights[1]);
-	RenderLight(&lights[2]);
-	RenderLight(&lights[3]);
-
 	/* Render Scene */
 	BatchRenderer2DStart(CameraGetViewProjectionPtr(&camera));
 
@@ -163,6 +156,16 @@ void OnRender(Application* app)
 	}
 
 	BatchRenderer2DFlush();
+
+	for (size_t i = 0; i < LIGHT_COUNT; ++i)
+	{
+		ProcessLight(&lights[i]);
+	}
+
+	for (size_t i = 0; i < LIGHT_COUNT; ++i)
+	{
+		ShadowEngineRenderLight(&shadow, &lights[i], CameraGetViewProjectionPtr(&camera));
+	}
 }
 
 void OnRenderDebug(Application* app)

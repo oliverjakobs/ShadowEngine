@@ -57,6 +57,5 @@ void main(void)
 	float lit = mix(center, sum, u_SoftShadows);
 	
 	//multiply the summed amount by our distance, which gives us a radial falloff
-	//then multiply by vertex (light) color
-	f_Color = u_Color * vec4(vec3(1.0), lit * smoothstep(1.0, 0.0, r));
+	f_Color = vec4(u_Color.rgb, lit * smoothstep(1.0, 0.0, r));
 }

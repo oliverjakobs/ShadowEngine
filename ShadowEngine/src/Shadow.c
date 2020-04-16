@@ -35,7 +35,7 @@ void ShadowEngineDestroy(ShadowEngine* shadow)
 	ignisDeleteShader(&shadow->shadow_shader);
 }
 
-void ShadowEngineStart(ShadowEngine* shadow, Light* light)
+void ShadowEngineStartLight(ShadowEngine* shadow, Light* light)
 {
 	/* save previous gl state */
 	glGetIntegerv(GL_VIEWPORT, shadow->backup_viewport);
@@ -52,7 +52,7 @@ void ShadowEngineStart(ShadowEngine* shadow, Light* light)
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void ShadowEngineProcess(ShadowEngine* shadow, Light* light, const float* view_proj)
+void ShadowEngineProcessLight(ShadowEngine* shadow, Light* light, const float* view_proj)
 {
 	glViewport(shadow->backup_viewport[0], shadow->backup_viewport[1], shadow->backup_viewport[2], shadow->backup_viewport[3]);
 
@@ -73,7 +73,7 @@ void ShadowEngineProcess(ShadowEngine* shadow, Light* light, const float* view_p
 	ignisClearColor(shadow->backup_clear_color);
 }
 
-void ShadowEngineRender(ShadowEngine* shadow, Light* light, const float* view_proj)
+void ShadowEngineRenderLight(ShadowEngine* shadow, Light* light, const float* view_proj)
 {
 	ignisSetUniform1f(&shadow->shadow_shader, "u_SoftShadows", 1.0f);
 	ignisSetUniform1f(&shadow->shadow_shader, "u_Resolution", light->radius);

@@ -36,8 +36,8 @@ typedef struct
 void ShadowEngineInit(ShadowEngine* shadow);
 void ShadowEngineDestroy(ShadowEngine* shadow);
 
-void ShadowEngineStart(ShadowEngine* shadow, Light* light);
-void ShadowEngineProcess(ShadowEngine* shadow, Light* light, const float* view_proj);
-void ShadowEngineRender(ShadowEngine* shadow, Light* light, const float* view_proj);
+void ShadowEngineStartLight(ShadowEngine* shadow, Light* light);
+void ShadowEngineProcessLight(ShadowEngine* shadow, Light* light, const float* view_proj);
+void ShadowEngineRenderLight(ShadowEngine* shadow, Light* light, const float* view_proj);
 
 #endif /* !SHADOW_H */
