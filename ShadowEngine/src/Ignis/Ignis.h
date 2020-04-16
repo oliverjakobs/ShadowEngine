@@ -70,6 +70,8 @@ extern const IgnisColorRGBA IGNIS_YELLOW;
 
 IgnisColorRGBA* ignisBlendColorRGBA(IgnisColorRGBA* color, float alpha);
 
+void ignisClearColor(IgnisColorRGBA color);
+
 char* ignisReadFile(const char* path, size_t* sizeptr);
 
 #ifdef __cplusplus

@@ -5,12 +5,12 @@
 
 #include "../Ignis.h"
 
-int ignisCreateTextureEmpty(IgnisTexture* texture, GLuint target, int width, int height, IgnisTextureConfig* config)
+int ignisCreateTexture2DEmpty(IgnisTexture2D* texture, int width, int height, IgnisTextureConfig* config)
 {
-	return ignisCreateTextureRaw(texture, target, width, height, NULL, config);
+	return ignisCreateTexture2DRaw(texture, width, height, NULL, config);
 }
 
-int ignisCreateTextureRaw(IgnisTexture* texture, GLuint target, int width, int height, void* pixels, IgnisTextureConfig* configptr)
+int ignisCreateTexture2DRaw(IgnisTexture2D* texture, int width, int height, void* pixels, IgnisTextureConfig* configptr)
 {
 	IgnisTextureConfig config = IGNIS_DEFAULT_CONFIG;
 
@@ -19,72 +19,64 @@ int ignisCreateTextureRaw(IgnisTexture* texture, GLuint target, int width, int h
 
 	if (texture)
 	{
-		texture->name = ignisGenerateTexture(target, width, height, pixels, config);
-		texture->target = target;
+		texture->name = ignisGenerateTexture(GL_TEXTURE_2D, width, height, pixels, config);
 		texture->width = width;
 		texture->height = height;
 		texture->rows = 1;
 		texture->columns = 1;
-		texture->slot = 0;
 		texture->config = config;
 
 		return texture->name;
 	}
 
-	return 0;
+	return IGNIS_FAILURE;
 }
 
-int ignisCreateTexture(IgnisTexture* texture, GLuint target, const char* path, GLuint rows, GLuint columns, int flip_on_load, IgnisTextureConfig* configptr)
+int ignisCreateTexture2D(IgnisTexture2D* texture, const char* path, GLuint rows, GLuint columns, int flip_on_load, IgnisTextureConfig* configptr)
 {
+	if (!texture) return IGNIS_FAILURE;
+
 	IgnisTextureConfig config = IGNIS_DEFAULT_CONFIG;
 
 	if (configptr)
 		config = *configptr;
 
-	if (texture)
+	stbi_set_flip_vertically_on_load(flip_on_load);
+
+	int bpp = 0;
+
+	unsigned char* pixels = stbi_load(path, &texture->width, &texture->height, &bpp, 4);
+
+	/* check if bpp and format matches */
+	if (bpp == 4)
 	{
-		stbi_set_flip_vertically_on_load(flip_on_load);
+		if (config.format != GL_RGBA || config.internal_format != GL_RGBA8)
+			_ignisErrorCallback(IGNIS_WARN, "[Texture] Format mismatch for %s", path);
+	}
+	else if (bpp == 3)
+	{
+		if (config.format != GL_RGB || config.internal_format != GL_RGB8)
+			_ignisErrorCallback(IGNIS_WARN, "[Texture] Format mismatch for %s", path);
+	}
 
-		int bpp = 0;
-
-		unsigned char* pixels = stbi_load(path, &texture->width, &texture->height, &bpp, 4);
-
-		/* check if bpp and format matches */
-		if (bpp == 4)
-		{
-			if (config.format != GL_RGBA || config.internal_format != GL_RGBA8)
-				_ignisErrorCallback(IGNIS_WARN, "[Texture] Format mismatch for %s", path);
-		}
-		else if (bpp == 3)
-		{
-			if (config.format != GL_RGB || config.internal_format != GL_RGB8)
-				_ignisErrorCallback(IGNIS_WARN, "[Texture] Format mismatch for %s", path);
-		}
-
-		if (pixels)
-		{
-			texture->name = ignisGenerateTexture(target, texture->width, texture->height, pixels, config);
-			stbi_image_free(pixels);
-		}
-		else
-		{
-			_ignisErrorCallback(IGNIS_ERROR, "[Texture] Failed to load texture(%s): %s", path, stbi_failure_reason());
-			texture->name = 0;
-		}
-
-		texture->target = target;
+	if (pixels)
+	{
+		texture->name = ignisGenerateTexture(GL_TEXTURE_2D, texture->width, texture->height, pixels, config);
 		texture->rows = rows;
 		texture->columns = columns;
-		texture->slot = 0;
 		texture->config = config;
+
+		stbi_image_free(pixels);
 
 		return texture->name;
 	}
 
-	return 0;
+	_ignisErrorCallback(IGNIS_ERROR, "[Texture] Failed to load texture(%s): %s", path, stbi_failure_reason());
+
+	return IGNIS_FAILURE;
 }
 
-void ignisDestroyTexture(IgnisTexture* texture)
+void ignisDeleteTexture2D(IgnisTexture2D* texture)
 {
 	glDeleteTextures(1, &texture->name);
 }
@@ -125,23 +117,16 @@ GLuint ignisGenerateTexture(GLuint target, int width, int height, void* pixels, 
 	default:
 		_ignisErrorCallback(IGNIS_ERROR, "[Texture] Unsupported target (%d)", target);
 		glDeleteTextures(1, &name);
-		return 0;
+		return IGNIS_FAILURE;
 	}
 	glGenerateMipmap(target);
 
 	return name;
 }
 
-void ignisBindTexture(IgnisTexture* texture, GLuint slot)
+void ignisBindTexture2D(IgnisTexture2D* texture, GLuint slot)
 {
 	glActiveTexture(GL_TEXTURE0 + slot);
-	glBindTexture(texture->target, texture->name);
-	texture->slot = slot;
+	glBindTexture(GL_TEXTURE_2D, (texture) ? texture->name : 0);
 }
 
-void ignisUnbindTexture(IgnisTexture* texture)
-{
-	glActiveTexture(GL_TEXTURE0 + texture->slot);
-	glBindTexture(texture->target, 0);
-	texture->slot = 0;
-}

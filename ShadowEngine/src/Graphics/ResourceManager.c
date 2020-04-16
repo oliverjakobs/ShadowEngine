@@ -10,7 +10,7 @@
 typedef struct
 {
 	char key[APPLICATION_STR_LEN];
-	IgnisTexture* value;
+	IgnisTexture2D* value;
 } _texkvp;
 
 typedef struct
@@ -54,7 +54,7 @@ int ResourceManagerInit(ResourceManager* resources, const char* path)
 		int rows = MAX(tb_json_int((char*)texture.value, "{'atlas'[0", NULL), 1);
 		int columns = MAX(tb_json_int((char*)texture.value, "{'atlas'[1", NULL), 1);
 
-		ResourceManagerAddTexture(resources, texture_name, texture_path, rows, columns);
+		ResourceManagerAddTexture2D(resources, texture_name, texture_path, rows, columns);
 	}
 
 	/* fonts */
@@ -85,7 +85,7 @@ int ResourceManagerInit(ResourceManager* resources, const char* path)
 void ResourceManagerDestroy(ResourceManager* manager)
 {
 	for (struct clib_hashmap_iter* iter = clib_hashmap_iter(&manager->textures); iter; iter = clib_hashmap_iter_next(&manager->textures, iter))
-		ignisDestroyTexture(tex_hashmap_iter_get_value(iter)->value);
+		ignisDeleteTexture2D(tex_hashmap_iter_get_value(iter)->value);
 
 	clib_hashmap_destroy(&manager->textures);
 
@@ -95,7 +95,7 @@ void ResourceManagerDestroy(ResourceManager* manager)
 	clib_hashmap_destroy(&manager->fonts);
 }
 
-IgnisTexture* ResourceManagerAddTexture(ResourceManager* manager, const char* name, const char* path, int rows, int columns)
+IgnisTexture2D* ResourceManagerAddTexture2D(ResourceManager* manager, const char* name, const char* path, int rows, int columns)
 {
 	if (strlen(name) > APPLICATION_STR_LEN)
 	{
@@ -103,9 +103,9 @@ IgnisTexture* ResourceManagerAddTexture(ResourceManager* manager, const char* na
 		return NULL;
 	}
 
-	IgnisTexture* texture = (IgnisTexture*)malloc(sizeof(IgnisTexture));
+	IgnisTexture2D* texture = (IgnisTexture2D*)malloc(sizeof(IgnisTexture2D));
 
-	if (ignisCreateTexture(texture, GL_TEXTURE_2D, path, rows, columns, 1, NULL))
+	if (ignisCreateTexture2D(texture, path, rows, columns, 1, NULL))
 	{
 		_texkvp* kvp = (_texkvp*)malloc(sizeof(_texkvp));
 
@@ -119,7 +119,7 @@ IgnisTexture* ResourceManagerAddTexture(ResourceManager* manager, const char* na
 		}
 
 		DEBUG_ERROR("[Resources] Failed to add texture: %s (%s)\n", name, path);
-		ignisDestroyTexture(texture);
+		ignisDeleteTexture2D(texture);
 		free(kvp);
 	}
 	free(texture);
@@ -136,7 +136,7 @@ IgnisFont* ResourceManagerAddFont(ResourceManager* manager, const char* name, co
 
 	IgnisFont* font = (IgnisFont*)malloc(sizeof(IgnisFont));
 
-	if (ignisLoadFont(font, path, size))
+	if (ignisCreateFont(font, path, size))
 	{
 		_fontkvp* kvp = (_fontkvp*)malloc(sizeof(_fontkvp));
 
@@ -156,7 +156,7 @@ IgnisFont* ResourceManagerAddFont(ResourceManager* manager, const char* name, co
 	return NULL;
 }
 
-IgnisTexture* ResourceManagerGetTexture(ResourceManager* manager, const char* name)
+IgnisTexture2D* ResourceManagerGetTexture2D(ResourceManager* manager, const char* name)
 {
 	_texkvp* kvp = tex_hashmap_get(&manager->textures, name);
 

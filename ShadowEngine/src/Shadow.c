@@ -2,18 +2,16 @@
 
 #include "Graphics/Renderer2D.h"
 
-static GLint backup_viewport[4];
-static GLfloat backup_clear_color[4];
-
-void ShadowEngineCreateLight(Light* light, float x, float y, float radius)
+void ShadowEngineCreateLight(Light* light, float x, float y, float radius, IgnisColorRGBA color)
 {
 	light->x = x;
 	light->y = y;
 	light->radius = radius;
+	light->color = color;
 
 	/* framebuffers */
-	ignisGenerateFrameBuffer(&light->occlusion_map, GL_TEXTURE_2D, radius, radius);
-	ignisGenerateFrameBuffer(&light->shadow_map, GL_TEXTURE_2D, radius, 1);
+	ignisGenerateFrameBuffer(&light->occlusion_map, radius, radius);
+	ignisGenerateFrameBuffer(&light->shadow_map, radius, 1);
 }
 
 void ShadowEngineDeleteLight(Light* light)
@@ -25,9 +23,9 @@ void ShadowEngineDeleteLight(Light* light)
 void ShadowEngineInit(ShadowEngine* shadow)
 {
 	/* shaders */
-	ignisShadervf(&shadow->occlusion_shader, "res/shaders/pass.vert", "res/shaders/occlusion.frag");
-	ignisShadervf(&shadow->shadow_map_shader, "res/shaders/pass.vert", "res/shaders/shadow_map.frag");
-	ignisShadervf(&shadow->shadow_shader, "res/shaders/pass.vert", "res/shaders/shadow.frag");
+	ignisCreateShadervf(&shadow->occlusion_shader, "res/shaders/pass.vert", "res/shaders/occlusion.frag");
+	ignisCreateShadervf(&shadow->shadow_map_shader, "res/shaders/pass.vert", "res/shaders/shadow_map.frag");
+	ignisCreateShadervf(&shadow->shadow_shader, "res/shaders/pass.vert", "res/shaders/shadow.frag");
 }
 
 void ShadowEngineDestroy(ShadowEngine* shadow)
@@ -40,8 +38,8 @@ void ShadowEngineDestroy(ShadowEngine* shadow)
 void ShadowEngineStart(ShadowEngine* shadow, Light* light)
 {
 	/* save previous gl state */
-	glGetIntegerv(GL_VIEWPORT, backup_viewport);
-	glGetFloatv(GL_COLOR_CLEAR_VALUE, backup_clear_color);
+	glGetIntegerv(GL_VIEWPORT, shadow->backup_viewport);
+	glGetFloatv(GL_COLOR_CLEAR_VALUE, &shadow->backup_clear_color.r);
 
 	/* create occlusion map */
 	ignisBindFrameBuffer(&light->occlusion_map);
@@ -56,7 +54,7 @@ void ShadowEngineStart(ShadowEngine* shadow, Light* light)
 
 void ShadowEngineProcess(ShadowEngine* shadow, Light* light, const float* view_proj)
 {
-	glViewport(backup_viewport[0], backup_viewport[1], backup_viewport[2], backup_viewport[3]);
+	glViewport(shadow->backup_viewport[0], shadow->backup_viewport[1], shadow->backup_viewport[2], shadow->backup_viewport[3]);
 
 	/* create shadow map*/
 	ignisBindFrameBuffer(&light->shadow_map);
@@ -72,7 +70,7 @@ void ShadowEngineProcess(ShadowEngine* shadow, Light* light, const float* view_p
 
 	/* RESET */
 	ignisBindFrameBuffer(NULL);
-	glClearColor(backup_clear_color[0], backup_clear_color[1], backup_clear_color[2], backup_clear_color[3]);
+	ignisClearColor(shadow->backup_clear_color);
 }
 
 void ShadowEngineRender(ShadowEngine* shadow, Light* light, const float* view_proj)
@@ -87,5 +85,5 @@ void ShadowEngineRender(ShadowEngine* shadow, Light* light, const float* view_pr
 	float h = light->radius;
 
 	Renderer2DSetShader(&shadow->shadow_shader);
-	Renderer2DRenderTexture(&light->shadow_map.texture, x, h + y, w, -h, view_proj);
+	Renderer2DRenderTextureC(&light->shadow_map.texture, x, h + y, w, -h, view_proj, light->color);
 }

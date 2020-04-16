@@ -13,13 +13,13 @@ typedef struct
 {
 	GLuint name;
 
-	IgnisTexture texture;
+	IgnisTexture2D texture;
 
 	int width;
 	int height;
 } IgnisFrameBuffer;
 
-int ignisGenerateFrameBuffer(IgnisFrameBuffer* fbo, GLuint texture_target, int width, int height);
+int ignisGenerateFrameBuffer(IgnisFrameBuffer* fbo, int width, int height);
 void ignisDeleteFrameBuffer(IgnisFrameBuffer* fbo);
 
 void ignisBindFrameBuffer(IgnisFrameBuffer* fbo);

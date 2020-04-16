@@ -18,7 +18,7 @@ void BackgroundClear(Background* background)
 	background->capacity = 0;
 }
 
-int BackgroundPushLayer(Background* background, IgnisTexture* texture, float x, float y, float w, float h, float parallax)
+int BackgroundPushLayer(Background* background, IgnisTexture2D* texture, float x, float y, float w, float h, float parallax)
 {
 	if (background->size >= background->capacity)
 		return 0;

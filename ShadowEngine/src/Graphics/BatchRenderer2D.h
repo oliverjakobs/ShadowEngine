@@ -14,8 +14,8 @@ void BatchRenderer2DDestroy();
 void BatchRenderer2DStart(const float* mat_view_proj);
 void BatchRenderer2DFlush();
 
-void BatchRenderer2DRenderTexture(IgnisTexture* texture, float x, float y, float w, float h);
-void BatchRenderer2DRenderTextureFrame(IgnisTexture* texture, float x, float y, float w, float h, float src_x, float src_y, float src_w, float src_h);
+void BatchRenderer2DRenderTexture(IgnisTexture2D* texture, float x, float y, float w, float h);
+void BatchRenderer2DRenderTextureFrame(IgnisTexture2D* texture, float x, float y, float w, float h, float src_x, float src_y, float src_w, float src_h);
 
 #ifdef __cplusplus
 }

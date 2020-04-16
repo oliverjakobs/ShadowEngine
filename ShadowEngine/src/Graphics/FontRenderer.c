@@ -40,7 +40,7 @@ void FontRendererInit(const char* vert, const char* frag)
 	_render_data.font = NULL;
 	_render_data.color = IGNIS_WHITE;
 
-	ignisShadervf(&_render_data.shader, vert, frag);
+	ignisCreateShadervf(&_render_data.shader, vert, frag);
 
 	_render_data.uniform_location_proj = ignisGetUniformLocation(&_render_data.shader, "u_Projection");
 	_render_data.uniform_location_color = ignisGetUniformLocation(&_render_data.shader, "u_Color");
@@ -73,7 +73,7 @@ void FontRendererFlush()
 	if (_render_data.vertex_index == 0)
 		return;
 
-	ignisBindFont(_render_data.font);
+	ignisBindFont(_render_data.font, 0);
 	ignisBindVertexArray(&_render_data.vao);
 	ignisBufferSubData(&_render_data.vao.array_buffers[0], 0, _render_data.vertex_index * sizeof(float), _render_data.vertices);
 
@@ -98,7 +98,7 @@ void FontRendererRenderText(float x, float y, const char* text)
 		if (_render_data.vertex_index + FONTRENDERER_VERTICES_PER_QUAD * FONTRENDERER_VERTEX_SIZE >= FONTRENDERER_BUFFER_SIZE)
 			FontRendererFlush();
 
-		if (!ignisLoadCharQuad(_render_data.font, text[i], &x, &y, _render_data.vertices, _render_data.vertex_index))
+		if (!ignisFontLoadCharQuad(_render_data.font, text[i], &x, &y, _render_data.vertices, _render_data.vertex_index))
 			_ignisErrorCallback(IGNIS_WARN, "[FontRenderer] Failed to load quad for %c", text[i]);
 
 		_render_data.vertex_index += FONTRENDERER_VERTICES_PER_QUAD * FONTRENDERER_VERTEX_SIZE;

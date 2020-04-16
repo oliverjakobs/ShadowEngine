@@ -15,22 +15,18 @@ typedef struct
 	int first_char;
 	int num_chars;
 
-	int bitmap_width;
-	int bitmap_height;
-
 	stbtt_bakedchar* char_data;
 
-	IgnisTexture texture;
+	IgnisTexture2D texture;
 } IgnisFont;
 
-int ignisLoadFont(IgnisFont* font, const char* path, float size);
-int ignisLoadFontConfig(IgnisFont* font, const char* path, float size, int first, int num, int bm_w, int bm_h);
+int ignisCreateFont(IgnisFont* font, const char* path, float size);
+int ignisCreateFontConfig(IgnisFont* font, const char* path, float size, int first, int num, int bitmap_width, int bitmap_height);
 void ignisDeleteFont(IgnisFont* font);
 
-void ignisBindFont(IgnisFont* font);
-void ignisUnbindFont(IgnisFont* font);
+void ignisBindFont(IgnisFont* font, GLuint slot);
 
-int ignisLoadCharQuad(IgnisFont* font, char c, float* x, float* y, float* vertices, size_t offset);
+int ignisFontLoadCharQuad(IgnisFont* font, char c, float* x, float* y, float* vertices, size_t offset);
 
 float ignisFontGetTextWidth(IgnisFont* font, const char* text);
 float ignisFontGetTextHeight(IgnisFont* font, const char* text, float* y_offset);

@@ -13,8 +13,8 @@ typedef struct
 	IgnisVertexArray vao;
 } IgnisQuad;
 
-void ignisCreateQuad(IgnisQuad* quad, GLfloat* vertices, size_t vertices_count, IgnisBufferElement* layout, size_t layout_size, GLuint* indices, size_t element_count);
-void ignisCreateQuadTextured(IgnisQuad* quad);
+int ignisCreateQuad(IgnisQuad* quad, GLfloat* vertices, size_t vertices_count, IgnisBufferElement* layout, size_t layout_size, GLuint* indices, size_t element_count);
+int ignisCreateQuadTextured(IgnisQuad* quad);
 
 void ignisDeleteQuad(IgnisQuad* quad);
 

@@ -14,7 +14,7 @@ Light lights[4];
 
 typedef struct
 {
-	IgnisTexture* texture;
+	IgnisTexture2D* texture;
 
 	float x;
 	float y;
@@ -65,23 +65,23 @@ void OnInit(Application* app)
 
 	CameraCreateOrtho(&camera, (vec3) { app->width / 2.0f, app->height / 2.0f, 0.0f }, (vec2) { (float)app->width, (float)app->height });
 
-	sprites[0] = (Sprite){ ResourceManagerGetTexture(&app->resources, "player"), 200.0f, 260.0f, 40.0f, 60.0f };
-	sprites[1] = (Sprite){ ResourceManagerGetTexture(&app->resources, "box"), 100.0f, 140.0f, 128.0f, 64.0f };
-	sprites[2] = (Sprite){ ResourceManagerGetTexture(&app->resources, "box"), 800.0f, 300.0f, 128.0f, 64.0f };
-	sprites[3] = (Sprite){ ResourceManagerGetTexture(&app->resources, "box"), 600.0f, 600.0f, 128.0f, 64.0f };
-	sprites[4] = (Sprite){ ResourceManagerGetTexture(&app->resources, "box"), 260.0f, 160.0f, 128.0f, 64.0f };
-	sprites[5] = (Sprite){ ResourceManagerGetTexture(&app->resources, "box"), 140.0f, 500.0f, 128.0f, 64.0f };
-	sprites[6] = (Sprite){ ResourceManagerGetTexture(&app->resources, "tree"), 400.0f, 580.0f, 48.0f, 128.0f };
-	sprites[7] = (Sprite){ ResourceManagerGetTexture(&app->resources, "tree"), 600.0f, 400.0f, 48.0f, 128.0f };
+	sprites[0] = (Sprite){ ResourceManagerGetTexture2D(&app->resources, "player"), 200.0f, 260.0f, 40.0f, 60.0f };
+	sprites[1] = (Sprite){ ResourceManagerGetTexture2D(&app->resources, "box"), 100.0f, 140.0f, 128.0f, 64.0f };
+	sprites[2] = (Sprite){ ResourceManagerGetTexture2D(&app->resources, "box"), 800.0f, 300.0f, 128.0f, 64.0f };
+	sprites[3] = (Sprite){ ResourceManagerGetTexture2D(&app->resources, "box"), 600.0f, 600.0f, 128.0f, 64.0f };
+	sprites[4] = (Sprite){ ResourceManagerGetTexture2D(&app->resources, "box"), 260.0f, 160.0f, 128.0f, 64.0f };
+	sprites[5] = (Sprite){ ResourceManagerGetTexture2D(&app->resources, "box"), 140.0f, 500.0f, 128.0f, 64.0f };
+	sprites[6] = (Sprite){ ResourceManagerGetTexture2D(&app->resources, "tree"), 400.0f, 580.0f, 48.0f, 128.0f };
+	sprites[7] = (Sprite){ ResourceManagerGetTexture2D(&app->resources, "tree"), 600.0f, 400.0f, 48.0f, 128.0f };
 
 	/* LIGHT */
 	ShadowEngineInit(&shadow);
-	ShadowEngineCreateLight(&mouse_light, 0.0f, 0.0f, 512.0f);
+	ShadowEngineCreateLight(&mouse_light, 0.0f, 0.0f, 512.0f, IGNIS_WHITE);
 
-	ShadowEngineCreateLight(&lights[0], 160.0f, 240.0f, 256.0f);
-	ShadowEngineCreateLight(&lights[1], 860.0f, 240.0f, 512.0f);
-	ShadowEngineCreateLight(&lights[2], 620.0f, 540.0f, 512.0f);
-	ShadowEngineCreateLight(&lights[3], 240.0f, 640.0f, 512.0f);
+	ShadowEngineCreateLight(&lights[0], 160.0f, 240.0f, 256.0f, IGNIS_RED);
+	ShadowEngineCreateLight(&lights[1], 860.0f, 240.0f, 512.0f, IGNIS_BLUE);
+	ShadowEngineCreateLight(&lights[2], 620.0f, 540.0f, 512.0f, IGNIS_GREEN);
+	ShadowEngineCreateLight(&lights[3], 240.0f, 640.0f, 512.0f, IGNIS_YELLOW);
 }
 
 void OnDestroy(Application* app)

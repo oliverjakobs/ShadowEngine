@@ -11,11 +11,13 @@ typedef struct
 	float y;
 	float radius;
 
+	IgnisColorRGBA color;
+
 	IgnisFrameBuffer occlusion_map;
 	IgnisFrameBuffer shadow_map;
 } Light;
 
-void ShadowEngineCreateLight(Light* light, float x, float y, float radius);
+void ShadowEngineCreateLight(Light* light, float x, float y, float radius, IgnisColorRGBA color);
 void ShadowEngineDeleteLight(Light* light);
 
 typedef struct
@@ -23,6 +25,10 @@ typedef struct
 	IgnisShader occlusion_shader;
 	IgnisShader shadow_map_shader;
 	IgnisShader shadow_shader;
+
+	/* opengl state backup */
+	GLint backup_viewport[4];
+	IgnisColorRGBA backup_clear_color;
 
 	Camera light_camera;
 } ShadowEngine;

@@ -13,9 +13,10 @@ typedef struct
 	GLuint program;
 } IgnisShader;
 
-int ignisShadervf(IgnisShader* shader, const char* vert, const char* frag);
-int ignisShadervgf(IgnisShader* shader, const char* vert, const char* geom, const char* frag);
-int ignisShaderSrcvf(IgnisShader* shader, const char* vert, const char* frag);
+int ignisCreateShadervf(IgnisShader* shader, const char* vert, const char* frag);
+int ignisCreateShadervgf(IgnisShader* shader, const char* vert, const char* geom, const char* frag);
+int ignisCreateShaderSrcvf(IgnisShader* shader, const char* vert, const char* frag);
+int ignisCreateShaderSrcvgf(IgnisShader* shader, const char* vert, const char* geom, const char* frag);
 void ignisDeleteShader(IgnisShader* shader);
 
 void ignisUseShader(IgnisShader* shader);
