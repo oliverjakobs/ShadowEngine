@@ -79,10 +79,10 @@ void OnInit(Application* app)
 	/* LIGHT */
 	ShadowEngineInit(&shadow);
 	ShadowEngineCreateLight(&lights[0], 0.0f, 0.0f, 512.0f, IGNIS_WHITE);
-	ShadowEngineCreateLight(&lights[1], 160.0f, 240.0f, 256.0f, IGNIS_RED);
-	ShadowEngineCreateLight(&lights[2], 860.0f, 240.0f, 512.0f, IGNIS_BLUE);
-	ShadowEngineCreateLight(&lights[3], 620.0f, 540.0f, 512.0f, IGNIS_GREEN);
-	ShadowEngineCreateLight(&lights[4], 240.0f, 640.0f, 512.0f, IGNIS_YELLOW);
+	ShadowEngineCreateLight(&lights[1], 160.0f, 240.0f, 300.0f, IGNIS_RED);
+	ShadowEngineCreateLight(&lights[2], 860.0f, 240.0f, 400.0f, IGNIS_BLUE);
+	ShadowEngineCreateLight(&lights[3], 240.0f, 640.0f, 800.0f, IGNIS_YELLOW);
+	ShadowEngineCreateLight(&lights[4], 620.0f, 540.0f, 512.0f, IGNIS_GREEN);
 }
 
 void OnDestroy(Application* app)
@@ -146,6 +146,19 @@ void ProcessLight(Light* light)
 
 void OnRender(Application* app)
 {
+	for (size_t i = 0; i < LIGHT_COUNT; ++i)
+	{
+		ProcessLight(&lights[i]);
+	}
+
+	ShadowEngineRenderStart(&shadow);
+	for (size_t i = 0; i < LIGHT_COUNT; ++i)
+	{
+		ShadowEngineRenderLight(&shadow, &lights[i]);
+	}
+	ShadowEngineRenderFlush(&shadow);
+
+
 	/* Render Scene */
 	BatchRenderer2DStart(CameraGetViewProjectionPtr(&camera));
 
@@ -156,16 +169,6 @@ void OnRender(Application* app)
 	}
 
 	BatchRenderer2DFlush();
-
-	for (size_t i = 0; i < LIGHT_COUNT; ++i)
-	{
-		ProcessLight(&lights[i]);
-	}
-
-	for (size_t i = 0; i < LIGHT_COUNT; ++i)
-	{
-		ShadowEngineRenderLight(&shadow, &lights[i], CameraGetViewProjectionPtr(&camera));
-	}
 }
 
 void OnRenderDebug(Application* app)

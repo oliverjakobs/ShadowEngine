@@ -22,6 +22,10 @@ void ShadowEngineDeleteLight(Light* light)
 
 void ShadowEngineInit(ShadowEngine* shadow)
 {
+	shadow->resolution = 512.0f;
+
+	ignisCreateQuadTextured(&shadow->quad, GL_DYNAMIC_DRAW);
+
 	/* shaders */
 	ignisCreateShadervf(&shadow->occlusion_shader, "res/shaders/pass.vert", "res/shaders/occlusion.frag");
 	ignisCreateShadervf(&shadow->shadow_map_shader, "res/shaders/pass.vert", "res/shaders/shadow_map.frag");
@@ -30,6 +34,8 @@ void ShadowEngineInit(ShadowEngine* shadow)
 
 void ShadowEngineDestroy(ShadowEngine* shadow)
 {
+	ignisDeleteQuad(&shadow->quad);
+
 	ignisDeleteShader(&shadow->occlusion_shader);
 	ignisDeleteShader(&shadow->shadow_map_shader);
 	ignisDeleteShader(&shadow->shadow_shader);
@@ -44,7 +50,6 @@ void ShadowEngineStartLight(ShadowEngine* shadow, Light* light)
 	/* create occlusion map */
 	ignisBindFrameBuffer(&light->occlusion_map);
 	shadow->light_camera.position = (vec3){ light->x, light->y, 0.0f };
-
 	CameraSetProjectionOrtho(&shadow->light_camera, (float)light->occlusion_map.width, (float)light->occlusion_map.height);
 	glViewport(0, 0, light->occlusion_map.width, light->occlusion_map.height);
 
@@ -52,28 +57,66 @@ void ShadowEngineStartLight(ShadowEngine* shadow, Light* light)
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
+static void ShadowEngineSetQuadVertices(ShadowEngine* shadow, float x, float y, float radius)
+{
+	GLfloat vertices[] =
+	{
+		0.0f, 0.0f, x, y,
+		1.0f, 0.0f, x + radius, y,
+		1.0f, 1.0f, x + radius, y + radius,
+		0.0f, 1.0f, x, y + radius
+	};
+
+	ignisBufferSubData(&shadow->quad.vao.array_buffers[0], 0, sizeof(vertices), vertices);
+}
+
 void ShadowEngineProcessLight(ShadowEngine* shadow, Light* light, const float* view_proj)
 {
-	glViewport(shadow->backup_viewport[0], shadow->backup_viewport[1], shadow->backup_viewport[2], shadow->backup_viewport[3]);
-
 	/* create shadow map*/
 	ignisBindFrameBuffer(&light->shadow_map);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	ignisSetUniform1f(&shadow->shadow_map_shader, "u_Resolution", light->radius);
+	float resolution = shadow->resolution;
+	float radius = light->radius;
 
-	float w = (float)light->shadow_map.width;
-	float h = (float)light->shadow_map.height;
+	glViewport(0, 0, 2 * resolution, radius);
 
-	Renderer2DSetShader(&shadow->shadow_map_shader);
-	Renderer2DRenderTexture(&light->occlusion_map.texture, 0.0f, h, w, -h, view_proj);
+	/* creating a mat4 that translates and scales */
+	float model[16];
+	model[0] = radius;	model[4] = 0.0f;	model[8] = 0.0f;	model[12] = 0.0f;
+	model[1] = 0.0f;	model[5] = radius;	model[9] = 0.0f;	model[13] = 0.0f;
+	model[2] = 0.0f;	model[6] = 0.0f;	model[10] = 1.0f;	model[14] = 0.0f;
+	model[3] = 0.0f;	model[7] = 0.0f;	model[11] = 0.0f;	model[15] = 1.0f;
+
+	ignisUseShader(&shadow->shadow_map_shader);
+
+	ignisSetUniformMat4(&shadow->shadow_map_shader, "u_Model", model);
+	ignisSetUniformMat4(&shadow->shadow_map_shader, "u_ViewProjection", view_proj);
+
+	ignisSetUniform1f(&shadow->shadow_map_shader, "u_Resolution", resolution);
+
+	ignisBindTexture2D(&light->occlusion_map.texture, 0);
+
+	// ShadowEngineSetQuadVertices(shadow, light->x, light->y, radius);
+	ignisDrawQuadElements(&shadow->quad, GL_TRIANGLES);
 
 	/* RESET */
 	ignisBindFrameBuffer(NULL);
 	ignisClearColor(shadow->backup_clear_color);
+	glViewport(shadow->backup_viewport[0], shadow->backup_viewport[1], shadow->backup_viewport[2], shadow->backup_viewport[3]);
 }
 
-void ShadowEngineRenderLight(ShadowEngine* shadow, Light* light, const float* view_proj)
+void ShadowEngineRenderStart(ShadowEngine* shadow)
+{
+	Renderer2DSetShader(&shadow->shadow_shader);
+}
+
+void ShadowEngineRenderFlush(ShadowEngine* shadow)
+{
+	glViewport(shadow->backup_viewport[0], shadow->backup_viewport[1], shadow->backup_viewport[2], shadow->backup_viewport[3]);
+}
+
+void ShadowEngineRenderLight(ShadowEngine* shadow, Light* light)
 {
 	ignisSetUniform1f(&shadow->shadow_shader, "u_SoftShadows", 1.0f);
 	ignisSetUniform1f(&shadow->shadow_shader, "u_Resolution", light->radius);
@@ -84,6 +127,10 @@ void ShadowEngineRenderLight(ShadowEngine* shadow, Light* light, const float* vi
 	float w = light->radius;
 	float h = light->radius;
 
-	Renderer2DSetShader(&shadow->shadow_shader);
-	Renderer2DRenderTextureC(&light->shadow_map.texture, x, h + y, w, -h, view_proj, light->color);
+	glViewport(x, y, w, h);
+
+	shadow->light_camera.position = (vec3){ light->x, light->y, 0.0f };
+	CameraSetProjectionOrtho(&shadow->light_camera, w, -h);
+
+	Renderer2DRenderTextureC(&light->shadow_map.texture, x, y, w, h, CameraGetViewProjectionPtr(&shadow->light_camera), light->color);
 }

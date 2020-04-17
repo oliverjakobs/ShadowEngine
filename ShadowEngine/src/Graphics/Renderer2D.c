@@ -18,7 +18,7 @@ static _Renderer2DStorage _render_data;
 
 void Renderer2DInit(const char* vert, const char* frag)
 {
-	ignisCreateQuadTextured(&_render_data.quad);
+	ignisCreateQuadTextured(&_render_data.quad, GL_STATIC_DRAW);
 
 	ignisCreateShadervf(&_render_data.default_shader, vert, frag);
 

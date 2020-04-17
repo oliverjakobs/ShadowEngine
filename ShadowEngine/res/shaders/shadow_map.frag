@@ -11,8 +11,6 @@ in vec2 v_TexCoord;
 uniform sampler2D u_Texture;
 uniform float u_Resolution;
 
-uniform vec4 u_Color;
-
 //alpha threshold for our occlusion map
 const float THRESHOLD = 0.75;
 
@@ -45,5 +43,5 @@ void main(void)
 		}
 	} 
 
-	f_Color = u_Color * vec4(vec3(distance), 1.0);
+	f_Color = vec4(vec3(distance), 1.0);
 }
