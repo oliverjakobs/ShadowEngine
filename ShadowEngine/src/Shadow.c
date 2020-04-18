@@ -55,16 +55,18 @@ void ShadowEngineStartLight(ShadowEngine* shadow, Light* light)
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
+
+	ignisClearColor(shadow->backup_clear_color);
 }
 
 static void ShadowEngineSetQuadVertices(ShadowEngine* shadow, float x, float y, float radius)
 {
 	GLfloat vertices[] =
 	{
-		0.0f, 0.0f, x, y,
-		1.0f, 0.0f, x + radius, y,
-		1.0f, 1.0f, x + radius, y + radius,
-		0.0f, 1.0f, x, y + radius
+		0.0f, 0.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 1.0f, 0.0f,
+		1.0f, 1.0f, 1.0f, 1.0f,
+		0.0f, 1.0f, 0.0f, 1.0f
 	};
 
 	ignisBufferSubData(&shadow->quad.vao.array_buffers[0], 0, sizeof(vertices), vertices);
@@ -97,17 +99,15 @@ void ShadowEngineProcessLight(ShadowEngine* shadow, Light* light, const float* v
 
 	ignisBindTexture2D(&light->occlusion_map.texture, 0);
 
-	// ShadowEngineSetQuadVertices(shadow, light->x, light->y, radius);
+	ShadowEngineSetQuadVertices(shadow, light->x, light->y, radius);
 	ignisDrawQuadElements(&shadow->quad, GL_TRIANGLES);
-
-	/* RESET */
-	ignisBindFrameBuffer(NULL);
-	ignisClearColor(shadow->backup_clear_color);
-	glViewport(shadow->backup_viewport[0], shadow->backup_viewport[1], shadow->backup_viewport[2], shadow->backup_viewport[3]);
 }
 
 void ShadowEngineRenderStart(ShadowEngine* shadow)
 {
+	/* RESET */
+	ignisBindFrameBuffer(NULL);
+
 	Renderer2DSetShader(&shadow->shadow_shader);
 }
 
