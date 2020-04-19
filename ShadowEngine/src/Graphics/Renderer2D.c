@@ -68,6 +68,11 @@ void Renderer2DRenderTextureC(IgnisTexture2D* texture, float x, float y, float w
 
 void Renderer2DRenderTextureM(IgnisTexture2D* texture, const float* model, const float* view_proj, const float* color)
 {
+	Renderer2DRenderTextureQuad(texture, &_render_data.quad, model, view_proj, color);
+}
+
+void Renderer2DRenderTextureQuad(IgnisTexture2D* texture, IgnisQuad* quad, const float* model, const float* view_proj, const float* color)
+{
 	ignisUseShader(_render_data.shader);
 
 	ignisSetUniformMat4l(_render_data.shader, _render_data.uniform_location_view_proj, view_proj);
@@ -76,5 +81,5 @@ void Renderer2DRenderTextureM(IgnisTexture2D* texture, const float* model, const
 
 	ignisBindTexture2D(texture, 0);
 
-	ignisDrawQuadElements(&_render_data.quad, GL_TRIANGLES);
+	ignisDrawQuadElements(quad, GL_TRIANGLES);
 }

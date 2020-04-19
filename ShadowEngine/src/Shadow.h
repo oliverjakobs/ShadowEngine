@@ -4,7 +4,6 @@
 #include "Ignis/Ignis.h"
 #include "Ignis/Framebuffer.h"
 #include "Ignis/Quad.h"
-#include "Camera/Camera.h"
 
 typedef struct
 {
@@ -27,26 +26,25 @@ typedef struct
 	IgnisShader shadow_map_shader;
 	IgnisShader shadow_shader;
 
-	float resolution;
+	IgnisFrameBuffer occlusion_map;
 
 	IgnisQuad quad;
 
 	/* opengl state backup */
 	GLint backup_viewport[4];
 	IgnisColorRGBA backup_clear_color;
-
-	Camera light_camera;
 } ShadowEngine;
 
-void ShadowEngineInit(ShadowEngine* shadow);
+void ShadowEngineInit(ShadowEngine* shadow, int width, int height);
 void ShadowEngineDestroy(ShadowEngine* shadow);
 
-void ShadowEngineStartLight(ShadowEngine* shadow, Light* light);
+void ShadowEngineStart(ShadowEngine* shadow);
+
 void ShadowEngineProcessLight(ShadowEngine* shadow, Light* light, const float* view_proj);
 
 void ShadowEngineRenderStart(ShadowEngine* shadow);
 void ShadowEngineRenderFlush(ShadowEngine* shadow);
 
-void ShadowEngineRenderLight(ShadowEngine* shadow, Light* light);
+void ShadowEngineRenderLight(ShadowEngine* shadow, Light* light, const float* view_proj);
 
 #endif /* !SHADOW_H */

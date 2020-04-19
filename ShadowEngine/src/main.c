@@ -1,6 +1,7 @@
 #include "Application/Application.h"
 
 #include "Shadow.h"
+#include "Camera/Camera.h"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
@@ -77,7 +78,7 @@ void OnInit(Application* app)
 	sprites[7] = (Sprite){ ResourceManagerGetTexture2D(&app->resources, "tree"), 600.0f, 400.0f, 48.0f, 128.0f };
 
 	/* LIGHT */
-	ShadowEngineInit(&shadow);
+	ShadowEngineInit(&shadow, app->width, app->height);
 	ShadowEngineCreateLight(&lights[0], 0.0f, 0.0f, 512.0f, IGNIS_WHITE);
 	ShadowEngineCreateLight(&lights[1], 160.0f, 240.0f, 300.0f, IGNIS_RED);
 	ShadowEngineCreateLight(&lights[2], 860.0f, 240.0f, 400.0f, IGNIS_BLUE);
@@ -126,40 +127,11 @@ void OnUpdate(Application* app, float deltaTime)
 	lights[0].y = pos.y;
 }
 
-void ProcessLight(Light* light)
-{
-	ShadowEngineStartLight(&shadow, light);
-
-	/* Render occluders */
-	BatchRenderer2DStart(CameraGetViewProjectionPtr(&shadow.light_camera));
-
-	for (size_t i = 0; i < SPRITE_COUNT; ++i)
-	{
-		Sprite* sprite = &sprites[i];
-		BatchRenderer2DRenderTexture(sprite->texture, sprite->x, sprite->y, sprite->w, sprite->h);
-	}
-
-	BatchRenderer2DFlush();
-
-	ShadowEngineProcessLight(&shadow, light, CameraGetViewProjectionPtr(&camera));
-}
-
 void OnRender(Application* app)
 {
-	for (size_t i = 0; i < LIGHT_COUNT; ++i)
-	{
-		ProcessLight(&lights[i]);
-	}
+	ShadowEngineStart(&shadow);
 
-	ShadowEngineRenderStart(&shadow);
-	for (size_t i = 0; i < LIGHT_COUNT; ++i)
-	{
-		ShadowEngineRenderLight(&shadow, &lights[i]);
-	}
-	ShadowEngineRenderFlush(&shadow);
-
-
-	/* Render Scene */
+	/* Render occluders */
 	BatchRenderer2DStart(CameraGetViewProjectionPtr(&camera));
 
 	for (size_t i = 0; i < SPRITE_COUNT; ++i)
@@ -169,6 +141,27 @@ void OnRender(Application* app)
 	}
 
 	BatchRenderer2DFlush();
+
+	for (size_t i = 0; i < LIGHT_COUNT; ++i)
+	{
+		ShadowEngineProcessLight(&shadow, &lights[i], CameraGetViewProjectionPtr(&camera));
+	}
+
+	/* Render Lights */
+	ShadowEngineRenderStart(&shadow);
+
+	for (size_t i = 0; i < LIGHT_COUNT; ++i)
+	{
+		ShadowEngineRenderLight(&shadow, &lights[i], CameraGetViewProjectionPtr(&camera));
+	}
+	
+	ShadowEngineRenderFlush(&shadow);
+
+
+	/* Render Scene */
+
+	Renderer2DSetShader(NULL);
+	Renderer2DRenderTexture(&shadow.occlusion_map.texture, 0.0f, 0.0f, app->width, app->height, CameraGetViewProjectionPtr(&camera));
 }
 
 void OnRenderDebug(Application* app)
