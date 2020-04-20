@@ -132,36 +132,34 @@ void OnRender(Application* app)
 	ShadowEngineStart(&shadow);
 
 	/* Render occluders */
-	BatchRenderer2DStart(CameraGetViewProjectionPtr(&camera));
+	ShadowEngineStartOcclusion(&shadow, CameraGetViewProjectionPtr(&camera));
 
 	for (size_t i = 0; i < SPRITE_COUNT; ++i)
 	{
 		Sprite* sprite = &sprites[i];
-		BatchRenderer2DRenderTexture(sprite->texture, sprite->x, sprite->y, sprite->w, sprite->h);
+		ShadowEngineRenderOccluder(&shadow, sprite->texture, sprite->x, sprite->y, sprite->w, sprite->h);
 	}
 
-	BatchRenderer2DFlush();
+	ShadowEngineFlushOcclusion(&shadow);
 
-	for (size_t i = 0; i < LIGHT_COUNT; ++i)
-	{
-		ShadowEngineProcessLight(&shadow, &lights[i], CameraGetViewProjectionPtr(&camera));
-	}
+	/* Process lights */
+	ShadowEngineProcess(&shadow, lights, LIGHT_COUNT, CameraGetViewProjectionPtr(&camera));
 
 	/* Render Lights */
-	ShadowEngineRenderStart(&shadow);
-
-	for (size_t i = 0; i < LIGHT_COUNT; ++i)
-	{
-		ShadowEngineRenderLight(&shadow, &lights[i], CameraGetViewProjectionPtr(&camera));
-	}
+	ShadowEngineRender(&shadow, lights, LIGHT_COUNT, CameraGetViewProjectionPtr(&camera));
 	
-	ShadowEngineRenderFlush(&shadow);
-
+	ShadowEngineFinish(&shadow);
 
 	/* Render Scene */
+	// BatchRenderer2DStart(CameraGetViewProjectionPtr(&camera));
+	// for (size_t i = 0; i < SPRITE_COUNT; ++i)
+	// {
+	// 	Sprite* sprite = &sprites[i];
+	// 	BatchRenderer2DRenderTexture(sprite->texture, sprite->x, sprite->y, sprite->w, sprite->h);
+	// }
+	// BatchRenderer2DFlush();
 
-	Renderer2DSetShader(NULL);
-	Renderer2DRenderTexture(&shadow.occlusion_map.texture, 0.0f, 0.0f, app->width, app->height, CameraGetViewProjectionPtr(&camera));
+	Renderer2DRenderTexture(&shadow.scene_buffer.texture, 0.0f, 0.0f, app->width, app->height, CameraGetViewProjectionPtr(&camera));
 }
 
 void OnRenderDebug(Application* app)
@@ -181,24 +179,22 @@ void OnRenderGui(Application* app)
 
 int main()
 {
-	Application* app = (Application*)malloc(sizeof(Application));
-	ApplicationLoadConfig(app, "config.json");
+	Application app;
+	ApplicationLoadConfig(&app, "config.json");
 
-	OnInit(app);
+	OnInit(&app);
 
-	ApplicationSetOnEventCallback(app, OnEvent);
-	ApplicationSetOnUpdateCallback(app, OnUpdate);
-	ApplicationSetOnRenderCallback(app, OnRender);
-	ApplicationSetOnRenderDebugCallback(app, OnRenderDebug);
-	ApplicationSetOnRenderGuiCallback(app, OnRenderGui);
+	ApplicationSetOnEventCallback(&app, OnEvent);
+	ApplicationSetOnUpdateCallback(&app, OnUpdate);
+	ApplicationSetOnRenderCallback(&app, OnRender);
+	ApplicationSetOnRenderDebugCallback(&app, OnRenderDebug);
+	ApplicationSetOnRenderGuiCallback(&app, OnRenderGui);
 
-	ApplicationRun(app);
+	ApplicationRun(&app);
 
-	ApplicationDestroy(app);
+	ApplicationDestroy(&app);
 
-	OnDestroy(app);
-
-	free(app);
+	OnDestroy(&app);
 
 	return 0;
 }

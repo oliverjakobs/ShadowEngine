@@ -26,7 +26,7 @@ typedef struct
 	IgnisShader shadow_map_shader;
 	IgnisShader shadow_shader;
 
-	IgnisFrameBuffer occlusion_map;
+	IgnisFrameBuffer scene_buffer;
 
 	IgnisQuad quad;
 
@@ -39,12 +39,17 @@ void ShadowEngineInit(ShadowEngine* shadow, int width, int height);
 void ShadowEngineDestroy(ShadowEngine* shadow);
 
 void ShadowEngineStart(ShadowEngine* shadow);
+void ShadowEngineProcess(ShadowEngine* shadow, Light* lights, size_t count, const float* view_proj);
+void ShadowEngineRender(ShadowEngine* shadow, Light* lights, size_t count, const float* view_proj);
+void ShadowEngineFinish(ShadowEngine* shadow);
 
 void ShadowEngineProcessLight(ShadowEngine* shadow, Light* light, const float* view_proj);
-
-void ShadowEngineRenderStart(ShadowEngine* shadow);
-void ShadowEngineRenderFlush(ShadowEngine* shadow);
-
 void ShadowEngineRenderLight(ShadowEngine* shadow, Light* light, const float* view_proj);
+
+/* scene occlusion map */
+void ShadowEngineStartOcclusion(ShadowEngine* shadow, const float* view_proj);
+void ShadowEngineFlushOcclusion(ShadowEngine* shadow);
+
+void ShadowEngineRenderOccluder(ShadowEngine* shadow, IgnisTexture2D* texture, float x, float y, float w, float h);
 
 #endif /* !SHADOW_H */

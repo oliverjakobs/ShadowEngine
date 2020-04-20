@@ -1,6 +1,7 @@
 #include "Shadow.h"
 
 #include "Graphics/Renderer2D.h"
+#include "Graphics/BatchRenderer2D.h"
 
 void ShadowEngineCreateLight(Light* light, float x, float y, float radius, IgnisColorRGBA color)
 {
@@ -24,7 +25,7 @@ void ShadowEngineInit(ShadowEngine* shadow, int width, int height)
 {
 	ignisCreateQuadTextured(&shadow->quad, GL_DYNAMIC_DRAW);
 
-	ignisGenerateFrameBuffer(&shadow->occlusion_map, width, height);
+	ignisGenerateFrameBuffer(&shadow->scene_buffer, width, height);
 
 	/* shaders */
 	ignisCreateShadervf(&shadow->occlusion_shader, "res/shaders/pass.vert", "res/shaders/occlusion.frag");
@@ -36,7 +37,7 @@ void ShadowEngineDestroy(ShadowEngine* shadow)
 {
 	ignisDeleteQuad(&shadow->quad);
 
-	ignisDeleteFrameBuffer(&shadow->occlusion_map);
+	ignisDeleteFrameBuffer(&shadow->scene_buffer);
 
 	ignisDeleteShader(&shadow->occlusion_shader);
 	ignisDeleteShader(&shadow->shadow_map_shader);
@@ -48,30 +49,35 @@ void ShadowEngineStart(ShadowEngine* shadow)
 	/* save previous gl state */
 	glGetIntegerv(GL_VIEWPORT, shadow->backup_viewport);
 	glGetFloatv(GL_COLOR_CLEAR_VALUE, &shadow->backup_clear_color.r);
-
-	/* create occlusion map */
-	ignisBindFrameBuffer(&shadow->occlusion_map);
-
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-static void ShadowEngineSetQuadVertices(ShadowEngine* shadow, float x, float y, float radius)
+void ShadowEngineProcess(ShadowEngine* shadow, Light* lights, size_t count, const float* view_proj)
 {
-	float s1 = x / shadow->occlusion_map.width;
-	float t1 = y / shadow->occlusion_map.height;
-	float s2 = s1 + (radius / shadow->occlusion_map.width);
-	float t2 = t1 + (radius / shadow->occlusion_map.height);
-
-	GLfloat vertices[] =
+	for (size_t i = 0; i < count; ++i)
 	{
-		0.0f, 0.0f, s1, t1,
-		1.0f, 0.0f, s2, t1,
-		1.0f, 1.0f, s2, t2,
-		0.0f, 1.0f, s1, t2
-	};
+		ShadowEngineProcessLight(shadow, &lights[i], view_proj);
+	}
+}
 
-	ignisBufferSubData(&shadow->quad.vao.array_buffers[0], 0, sizeof(vertices), vertices);
+void ShadowEngineRender(ShadowEngine* shadow, Light* lights, size_t count, const float* view_proj)
+{
+	/* RESET */
+	ignisBindFrameBuffer(NULL);
+
+	Renderer2DSetShader(&shadow->shadow_shader);
+
+	for (size_t i = 0; i < count; ++i)
+	{
+		ShadowEngineRenderLight(shadow, &lights[i], view_proj);
+	}
+}
+
+void ShadowEngineFinish(ShadowEngine* shadow)
+{
+	glViewport(shadow->backup_viewport[0], shadow->backup_viewport[1], shadow->backup_viewport[2], shadow->backup_viewport[3]);
+
+	ignisClearColor(shadow->backup_clear_color);
+	Renderer2DSetShader(NULL);
 }
 
 void ShadowEngineProcessLight(ShadowEngine* shadow, Light* light, const float* view_proj)
@@ -83,9 +89,23 @@ void ShadowEngineProcessLight(ShadowEngine* shadow, Light* light, const float* v
 	float x = light->x - (radius / 2.0f);
 	float y = light->y - (radius / 2.0f);
 
-	ShadowEngineSetQuadVertices(shadow, x, y, radius);
+	/* set quad vertices */
+	float s1 = x / shadow->scene_buffer.width;
+	float t1 = y / shadow->scene_buffer.height;
+	float s2 = s1 + (radius / shadow->scene_buffer.width);
+	float t2 = t1 + (radius / shadow->scene_buffer.height);
 
-	/* creating a mat4 that translates and scales */
+	GLfloat vertices[] =
+	{
+		0.0f, 0.0f, s1, t1,
+		1.0f, 0.0f, s2, t1,
+		1.0f, 1.0f, s2, t2,
+		0.0f, 1.0f, s1, t2
+	};
+
+	ignisBufferSubData(&shadow->quad.vao.array_buffers[0], 0, sizeof(vertices), vertices);
+
+	/* creating a mat4 that scales to light radius */
 	float model[16];
 	model[0] = radius;	model[4] = 0.0f;	model[8] = 0.0f;	model[12] = 0.0f;
 	model[1] = 0.0f;	model[5] = radius;	model[9] = 0.0f;	model[13] = 0.0f;
@@ -93,7 +113,7 @@ void ShadowEngineProcessLight(ShadowEngine* shadow, Light* light, const float* v
 	model[3] = 0.0f;	model[7] = 0.0f;	model[11] = 0.0f;	model[15] = 1.0f;
 
 	Renderer2DSetShader(NULL);
-	Renderer2DRenderTextureQuad(&shadow->occlusion_map.texture, &shadow->quad, model, view_proj, &IGNIS_WHITE.r);
+	Renderer2DRenderTextureQuad(&shadow->scene_buffer.texture, &shadow->quad, model, view_proj, IGNIS_WHITE);
 
 	/* create shadow map*/
 	ignisBindFrameBuffer(&light->shadow_map);
@@ -102,22 +122,7 @@ void ShadowEngineProcessLight(ShadowEngine* shadow, Light* light, const float* v
 	ignisSetUniform1f(&shadow->shadow_map_shader, "u_Resolution", radius);
 
 	Renderer2DSetShader(&shadow->shadow_map_shader);
-	Renderer2DRenderTexture(&light->occlusion_map.texture, 0.0f, 0.0f, radius, radius, view_proj);
-}
-
-void ShadowEngineRenderStart(ShadowEngine* shadow)
-{
-	/* RESET */
-	ignisBindFrameBuffer(NULL);
-
-	Renderer2DSetShader(&shadow->shadow_shader);
-}
-
-void ShadowEngineRenderFlush(ShadowEngine* shadow)
-{
-	glViewport(shadow->backup_viewport[0], shadow->backup_viewport[1], shadow->backup_viewport[2], shadow->backup_viewport[3]);
-
-	ignisClearColor(shadow->backup_clear_color);
+	Renderer2DRenderTextureModel(&light->occlusion_map.texture, model, view_proj, IGNIS_WHITE);
 }
 
 void ShadowEngineRenderLight(ShadowEngine* shadow, Light* light, const float* view_proj)
@@ -131,5 +136,26 @@ void ShadowEngineRenderLight(ShadowEngine* shadow, Light* light, const float* vi
 	float w = light->radius;
 	float h = light->radius;
 
-	Renderer2DRenderTextureC(&light->shadow_map.texture, x, h + y, w, -h, view_proj, light->color);
+	Renderer2DRenderTextureColor(&light->shadow_map.texture, x, h + y, w, -h, view_proj, light->color);
+}
+
+void ShadowEngineStartOcclusion(ShadowEngine* shadow, const float* view_proj)
+{
+	/* bind occlusion map */
+	ignisBindFrameBuffer(&shadow->scene_buffer);
+
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	BatchRenderer2DStart(view_proj);
+}
+
+void ShadowEngineFlushOcclusion(ShadowEngine* shadow)
+{
+	BatchRenderer2DFlush();
+}
+
+void ShadowEngineRenderOccluder(ShadowEngine* shadow, IgnisTexture2D* texture, float x, float y, float w, float h)
+{
+	BatchRenderer2DRenderTexture(texture, x, y, w, h);
 }

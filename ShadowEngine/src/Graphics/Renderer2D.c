@@ -51,10 +51,10 @@ void Renderer2DSetShader(IgnisShader* shader)
 
 void Renderer2DRenderTexture(IgnisTexture2D* texture, float x, float y, float w, float h, const float* view_proj)
 {
-	Renderer2DRenderTextureC(texture, x, y, w, h, view_proj, IGNIS_WHITE);
+	Renderer2DRenderTextureColor(texture, x, y, w, h, view_proj, IGNIS_WHITE);
 }
 
-void Renderer2DRenderTextureC(IgnisTexture2D* texture, float x, float y, float w, float h, const float* view_proj, IgnisColorRGBA color)
+void Renderer2DRenderTextureColor(IgnisTexture2D* texture, float x, float y, float w, float h, const float* view_proj, IgnisColorRGBA color)
 {
 	/* creating a mat4 that translates and scales */
 	float model[16];
@@ -63,21 +63,21 @@ void Renderer2DRenderTextureC(IgnisTexture2D* texture, float x, float y, float w
 	model[2] = 0.0f;	model[6] = 0.0f;	model[10] = 1.0f;	model[14] = 0.0f;
 	model[3] = 0.0f;	model[7] = 0.0f;	model[11] = 0.0f;	model[15] = 1.0f;
 
-	Renderer2DRenderTextureM(texture, model, view_proj, &color.r);
+	Renderer2DRenderTextureModel(texture, model, view_proj, color);
 }
 
-void Renderer2DRenderTextureM(IgnisTexture2D* texture, const float* model, const float* view_proj, const float* color)
+void Renderer2DRenderTextureModel(IgnisTexture2D* texture, const float* model, const float* view_proj, IgnisColorRGBA color)
 {
 	Renderer2DRenderTextureQuad(texture, &_render_data.quad, model, view_proj, color);
 }
 
-void Renderer2DRenderTextureQuad(IgnisTexture2D* texture, IgnisQuad* quad, const float* model, const float* view_proj, const float* color)
+void Renderer2DRenderTextureQuad(IgnisTexture2D* texture, IgnisQuad* quad, const float* model, const float* view_proj, IgnisColorRGBA color)
 {
 	ignisUseShader(_render_data.shader);
 
 	ignisSetUniformMat4l(_render_data.shader, _render_data.uniform_location_view_proj, view_proj);
 	ignisSetUniformMat4l(_render_data.shader, _render_data.uniform_location_model, model);
-	ignisSetUniform4fl(_render_data.shader, _render_data.uniform_location_color, color);
+	ignisSetUniform4fl(_render_data.shader, _render_data.uniform_location_color, &color.r);
 
 	ignisBindTexture2D(texture, 0);
 
