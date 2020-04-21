@@ -14,19 +14,18 @@ uniform float u_Resolution;
 //alpha threshold for our occlusion map
 const float THRESHOLD = 0.75;
 
-void main(void)
+void main()
 {
-	float distance = 1.0;
+	float d = 1.0;
+
+	float theta = PI * (2 * v_TexCoord.s + 0.5);
 
 	for (float y = 0.0; y < u_Resolution; y += 1.0)
 	{
 		//the current distance is how far from the top we've come
-		float dst = y / u_Resolution;
+		float r = y / u_Resolution;
 
 		//rectangular to polar filter
-		vec2 norm = vec2(v_TexCoord.s, dst) * 2.0 - 1.0;
-		float theta = PI * 1.5 + norm.x * PI;
-		float r = (1.0 + norm.y) * 0.5;
 		
 		//coord which we will sample from occlude map
 		vec2 coord = vec2(-r * sin(theta), -r * cos(theta))/2.0 + 0.5;
@@ -39,9 +38,9 @@ void main(void)
 		float caster = data.a;
 		if (caster > THRESHOLD) 
 		{
-			distance = min(distance, dst); //NOTE: we could probably use "break" or "return" here
+			d = min(d, r); //NOTE: we could probably use "break" or "return" here
 		}
 	} 
 
-	f_Color = vec4(vec3(distance), 1.0);
+	f_Color = vec4(vec3(d), 1.0);
 }

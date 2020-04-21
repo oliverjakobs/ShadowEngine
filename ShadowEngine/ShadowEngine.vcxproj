@@ -180,6 +180,7 @@
     <None Include="res\shaders\renderer2D.vert" />
     <None Include="res\shaders\shadow.frag" />
     <None Include="res\shaders\shadow_map.frag" />
+    <None Include="res\shaders\shadow_map2.frag" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\box.png" />

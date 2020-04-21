@@ -24,6 +24,7 @@ typedef struct
 {
 	IgnisShader occlusion_shader;
 	IgnisShader shadow_map_shader;
+	IgnisShader shadow_map_shader2;
 	IgnisShader shadow_shader;
 
 	IgnisFrameBuffer scene_buffer;
@@ -44,6 +45,7 @@ void ShadowEngineRender(ShadowEngine* shadow, Light* lights, size_t count, const
 void ShadowEngineFinish(ShadowEngine* shadow);
 
 void ShadowEngineProcessLight(ShadowEngine* shadow, Light* light, const float* view_proj);
+void ShadowEngineProcessLight2(ShadowEngine* shadow, Light* light, const float* view_proj);
 void ShadowEngineRenderLight(ShadowEngine* shadow, Light* light, const float* view_proj);
 
 /* scene occlusion map */

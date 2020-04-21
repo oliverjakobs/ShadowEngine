@@ -13,7 +13,8 @@ Light mouse_light;
 
 #define LIGHT_COUNT	5
 
-Light lights[LIGHT_COUNT];
+static Light light;
+static Light lights[LIGHT_COUNT];
 
 typedef struct
 {
@@ -28,13 +29,6 @@ typedef struct
 #define SPRITE_COUNT 8
 
 static Sprite sprites[SPRITE_COUNT];
-
-static void DebugRenderFrameBuffer(IgnisFrameBuffer* framebuffer, IgnisShader* shader, float x, float y, float w, float h, const float* view_proj)
-{
-	Renderer2DSetShader(shader);
-	Renderer2DRenderTexture(&framebuffer->texture, x, h + y, w, -h, view_proj);
-	Renderer2DSetShader(NULL);
-}
 
 static void DebugPrintFrameBuffer(const char* path, IgnisFrameBuffer* framebuffer)
 {
@@ -79,11 +73,16 @@ void OnInit(Application* app)
 
 	/* LIGHT */
 	ShadowEngineInit(&shadow, app->width, app->height);
+
+	ShadowEngineCreateLight(&light, 256.0f, 256.0f, 512.0f, IGNIS_WHITE);
+
+	/*
 	ShadowEngineCreateLight(&lights[0], 0.0f, 0.0f, 512.0f, IGNIS_WHITE);
 	ShadowEngineCreateLight(&lights[1], 160.0f, 240.0f, 300.0f, IGNIS_RED);
 	ShadowEngineCreateLight(&lights[2], 860.0f, 240.0f, 400.0f, IGNIS_BLUE);
 	ShadowEngineCreateLight(&lights[3], 240.0f, 640.0f, 800.0f, IGNIS_YELLOW);
 	ShadowEngineCreateLight(&lights[4], 620.0f, 540.0f, 512.0f, IGNIS_GREEN);
+	*/
 }
 
 void OnDestroy(Application* app)
@@ -95,11 +94,15 @@ void OnDestroy(Application* app)
 
 	ShadowEngineDestroy(&shadow);
 
+	ShadowEngineDeleteLight(&light);
+
+	/*
 	ShadowEngineDeleteLight(&lights[0]);
 	ShadowEngineDeleteLight(&lights[1]);
 	ShadowEngineDeleteLight(&lights[2]);
 	ShadowEngineDeleteLight(&lights[3]);
 	ShadowEngineDeleteLight(&lights[4]);
+	*/
 }
 
 void OnEvent(Application* app, const Event e)
@@ -123,8 +126,10 @@ void OnEvent(Application* app, const Event e)
 void OnUpdate(Application* app, float deltaTime)
 {
 	vec2 pos = CameraGetMousePos(&camera, InputMousePositionVec2());
+	/* 
 	lights[0].x = pos.x;
 	lights[0].y = pos.y;
+	*/
 }
 
 void OnRender(Application* app)
@@ -143,10 +148,19 @@ void OnRender(Application* app)
 	ShadowEngineFlushOcclusion(&shadow);
 
 	/* Process lights */
-	ShadowEngineProcess(&shadow, lights, LIGHT_COUNT, CameraGetViewProjectionPtr(&camera));
+
+	/* Reference */
+	// ShadowEngineProcessLight(&shadow, &light, CameraGetViewProjectionPtr(&camera));
+
+	// DebugPrintFrameBuffer("shadow_1.bmp", &light.shadow_map);
+	
+	/* New */
+	ShadowEngineProcessLight2(&shadow, &light, CameraGetViewProjectionPtr(&camera));
+ 
+	// DebugPrintFrameBuffer("shadow_2.bmp", &light.shadow_map);
 
 	/* Render Lights */
-	ShadowEngineRender(&shadow, lights, LIGHT_COUNT, CameraGetViewProjectionPtr(&camera));
+	ShadowEngineRender(&shadow, &light, 1, CameraGetViewProjectionPtr(&camera));
 	
 	ShadowEngineFinish(&shadow);
 
