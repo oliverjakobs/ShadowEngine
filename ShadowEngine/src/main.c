@@ -3,6 +3,8 @@
 #include "Shadow.h"
 #include "Camera/Camera.h"
 
+#include "Ignis/ComputeShader.h"
+
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
@@ -70,6 +72,11 @@ void OnInit(Application* app)
 	sprites[5] = (Sprite){ ResourceManagerGetTexture2D(&app->resources, "box"), 140.0f, 500.0f, 128.0f, 64.0f };
 	sprites[6] = (Sprite){ ResourceManagerGetTexture2D(&app->resources, "tree"), 400.0f, 580.0f, 48.0f, 128.0f };
 	sprites[7] = (Sprite){ ResourceManagerGetTexture2D(&app->resources, "tree"), 600.0f, 400.0f, 48.0f, 128.0f };
+
+	IgnisComputeShader compute;
+	ignisCreateComputeShader(&compute, "res/shaders/shadow_map.comp");
+
+	ignisDeleteComputeShader(&compute);
 
 	/* LIGHT */
 	ShadowEngineInit(&shadow, app->width, app->height);
