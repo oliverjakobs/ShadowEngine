@@ -5,12 +5,7 @@
 
 #include "../Ignis.h"
 
-int ignisCreateTexture2DEmpty(IgnisTexture2D* texture, int width, int height, IgnisTextureConfig* config)
-{
-	return ignisCreateTexture2DRaw(texture, width, height, NULL, config);
-}
-
-int ignisCreateTexture2DRaw(IgnisTexture2D* texture, int width, int height, void* pixels, IgnisTextureConfig* configptr)
+int ignisGenerateTexture2D(IgnisTexture2D* texture, int width, int height, void* pixels, IgnisTextureConfig* configptr)
 {
 	IgnisTextureConfig config = IGNIS_DEFAULT_CONFIG;
 
@@ -24,7 +19,6 @@ int ignisCreateTexture2DRaw(IgnisTexture2D* texture, int width, int height, void
 		texture->height = height;
 		texture->rows = 1;
 		texture->columns = 1;
-		texture->config = config;
 
 		return texture->name;
 	}
@@ -64,7 +58,6 @@ int ignisCreateTexture2D(IgnisTexture2D* texture, const char* path, GLuint rows,
 		texture->name = ignisGenerateTexture(GL_TEXTURE_2D, texture->width, texture->height, pixels, config);
 		texture->rows = rows;
 		texture->columns = columns;
-		texture->config = config;
 
 		stbi_image_free(pixels);
 

@@ -11,7 +11,6 @@
 Camera camera;
 
 ShadowEngine shadow;
-Light mouse_light;
 
 #define LIGHT_COUNT	5
 
@@ -34,6 +33,7 @@ static Sprite sprites[SPRITE_COUNT];
 
 static void DebugPrintFrameBuffer(const char* path, IgnisFrameBuffer* framebuffer)
 {
+	ignisBindFrameBuffer(framebuffer);
 	GLubyte* data = (GLubyte*)malloc(4 * (size_t)framebuffer->width * (size_t)framebuffer->height);
 	if (data)
 	{
@@ -42,6 +42,21 @@ static void DebugPrintFrameBuffer(const char* path, IgnisFrameBuffer* framebuffe
 		stbi_write_bmp(path, framebuffer->width, framebuffer->height, 4, data);
 	}
 	free(data);
+	ignisBindFrameBuffer(NULL);
+}
+
+static void DebugPrintTexture(const char* path, IgnisTexture2D* texture)
+{
+	ignisBindTexture2D(texture, 0);
+	GLubyte* data = (GLubyte*)malloc(4 * (size_t)texture->width * (size_t)texture->height);
+	if (data)
+	{
+		glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		stbi_flip_vertically_on_write(1);
+		stbi_write_bmp(path, texture->width, texture->height, 4, data);
+	}
+	free(data);
+	ignisBindTexture2D(NULL, 0);
 }
 
 void OnInit(Application* app)
@@ -72,11 +87,6 @@ void OnInit(Application* app)
 	sprites[5] = (Sprite){ ResourceManagerGetTexture2D(&app->resources, "box"), 140.0f, 500.0f, 128.0f, 64.0f };
 	sprites[6] = (Sprite){ ResourceManagerGetTexture2D(&app->resources, "tree"), 400.0f, 580.0f, 48.0f, 128.0f };
 	sprites[7] = (Sprite){ ResourceManagerGetTexture2D(&app->resources, "tree"), 600.0f, 400.0f, 48.0f, 128.0f };
-
-	IgnisComputeShader compute;
-	ignisCreateComputeShader(&compute, "res/shaders/shadow_map.comp");
-
-	ignisDeleteComputeShader(&compute);
 
 	/* LIGHT */
 	ShadowEngineInit(&shadow, app->width, app->height);
@@ -133,6 +143,8 @@ void OnEvent(Application* app, const Event e)
 void OnUpdate(Application* app, float deltaTime)
 {
 	vec2 pos = CameraGetMousePos(&camera, InputMousePositionVec2());
+	light.x = pos.x;
+	light.y = pos.y;
 	/* 
 	lights[0].x = pos.x;
 	lights[0].y = pos.y;
@@ -155,21 +167,17 @@ void OnRender(Application* app)
 	ShadowEngineFlushOcclusion(&shadow);
 
 	/* Process lights */
-
-	/* Reference */
-	// ShadowEngineProcessLight(&shadow, &light, CameraGetViewProjectionPtr(&camera));
-
-	// DebugPrintFrameBuffer("shadow_1.bmp", &light.shadow_map);
-	
-	/* New */
-	ShadowEngineProcessLight2(&shadow, &light, CameraGetViewProjectionPtr(&camera));
- 
-	// DebugPrintFrameBuffer("shadow_2.bmp", &light.shadow_map);
+	ShadowEngineProcess(&shadow, &light, 1, CameraGetViewProjectionPtr(&camera));
 
 	/* Render Lights */
 	ShadowEngineRender(&shadow, &light, 1, CameraGetViewProjectionPtr(&camera));
 	
 	ShadowEngineFinish(&shadow);
+
+	// DebugPrintTexture("shadow.bmp", &light.shadow);
+
+	// DebugPrintFrameBuffer("shadow_1.bmp", &light.shadow_map);
+	// DebugPrintFrameBuffer("shadow_2.bmp", &light.shadow_map);
 
 	/* Render Scene */
 	// BatchRenderer2DStart(CameraGetViewProjectionPtr(&camera));

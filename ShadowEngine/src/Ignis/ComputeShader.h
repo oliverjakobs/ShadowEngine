@@ -10,7 +10,7 @@ extern "C"
 
 typedef struct
 {
-	GLuint program;
+	IgnisShader program;
 
 	GLuint work_group_size[3];
 } IgnisComputeShader;
