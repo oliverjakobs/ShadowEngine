@@ -319,8 +319,6 @@
     <None Include="res\shaders\shadow_map.frag">
       <Filter>res\shaders</Filter>
     </None>
-    <None Include="res\shaders\shadow_map2.frag" />
-    <None Include="res\shaders\shadow_map.comp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\textures\box.png">

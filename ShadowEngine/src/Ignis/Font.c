@@ -49,7 +49,7 @@ int ignisCreateFontConfig(IgnisFont* font, const char* path, float size, int fir
 	config.internal_format = GL_R8;
 	config.format = GL_RED;
 
-	if (!ignisCreateTexture2DRaw(&font->texture, bitmap_width, bitmap_height, bitmap, &config))
+	if (!ignisGenerateTexture2D(&font->texture, bitmap_width, bitmap_height, bitmap, &config))
 	{
 		_ignisErrorCallback(IGNIS_ERROR, "[Font] Failed to create texture");
 		ignisDeleteFont(font);

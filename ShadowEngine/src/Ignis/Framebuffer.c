@@ -8,7 +8,7 @@ int ignisGenerateFrameBuffer(IgnisFrameBuffer* fbo, int width, int height)
 	fbo->height = height;
 
 	/* create a color attachment texture */
-	ignisCreateTexture2DEmpty(&fbo->texture, width, height, NULL);
+	ignisGenerateTexture2D(&fbo->texture, width, height, NULL, NULL);
 
 	glGenFramebuffers(1, &fbo->name);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo->name);
