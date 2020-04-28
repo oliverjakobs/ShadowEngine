@@ -42,7 +42,8 @@ void ShadowEngineDeleteLight(Light* light)
 
 void ShadowEngineInit(ShadowEngine* shadow, int width, int height)
 {
-	ignisCreateQuadTextured(&shadow->quad, GL_DYNAMIC_DRAW);
+	ignisCreateQuadTextured(&shadow->light_quad, GL_DYNAMIC_DRAW);
+	ignisCreateQuadTextured(&shadow->full_quad, GL_STATIC_DRAW);
 
 	ignisGenerateFrameBuffer(&shadow->scene_buffer, width, height);
 
@@ -54,7 +55,8 @@ void ShadowEngineInit(ShadowEngine* shadow, int width, int height)
 
 void ShadowEngineDestroy(ShadowEngine* shadow)
 {
-	ignisDeleteQuad(&shadow->quad);
+	ignisDeleteQuad(&shadow->light_quad);
+	ignisDeleteQuad(&shadow->full_quad);
 
 	ignisDeleteFrameBuffer(&shadow->scene_buffer);
 
@@ -122,7 +124,7 @@ void ShadowEngineProcessLight(ShadowEngine* shadow, Light* light, const float* v
 		0.0f, 1.0f, s1, t2
 	};
 
-	ignisBufferSubData(&shadow->quad.vao.array_buffers[0], 0, sizeof(vertices), vertices);
+	ignisBufferSubData(&shadow->light_quad.vao.array_buffers[0], 0, sizeof(vertices), vertices);
 
 	/* creating a mat4 that scales to light radius */
 	float model[16];
@@ -132,21 +134,26 @@ void ShadowEngineProcessLight(ShadowEngine* shadow, Light* light, const float* v
 	model[3] = 0.0f; model[7] = 0.0f; model[11] = 0.0f; model[15] = 1.0f;
 
 	Renderer2DSetShader(NULL);
-	Renderer2DRenderTextureQuad(&shadow->scene_buffer.texture, &shadow->quad, model, view_proj, IGNIS_WHITE);
+	Renderer2DRenderTextureQuad(&shadow->scene_buffer.texture, &shadow->light_quad, model, view_proj, IGNIS_WHITE);
 
 	/* create shadow map*/
 	ignisBindFrameBuffer(&light->shadow_map);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	ignisSetUniform1f(&shadow->shadow_map_shader, "u_Resolution", r);
+	ignisUseShader(&shadow->shadow_map_shader);
 
-	Renderer2DSetShader(&shadow->shadow_map_shader);
-	Renderer2DRenderTextureModel(&light->occlusion_map.texture, model, view_proj, IGNIS_WHITE);
+	ignisSetUniform1f(&shadow->shadow_map_shader, "u_Resolution", r);
+	ignisSetUniformMat4(&shadow->shadow_map_shader, "u_ViewProjection", view_proj);
+	ignisSetUniformMat4(&shadow->shadow_map_shader, "u_Model", model);
+
+	ignisBindTexture2D(&light->occlusion_map.texture, 0);
+
+	ignisDrawQuadElements(&shadow->full_quad, GL_TRIANGLES);
 }
 
 void ShadowEngineRenderLight(ShadowEngine* shadow, Light* light, const float* view_proj)
 {
-	//draw centered on light position
+	/* draw centered on light position */
 	float x = light->x - light->radius / 2.0f;
 	float y = light->y - light->radius / 2.0f;
 	float r = light->radius;

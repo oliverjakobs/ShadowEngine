@@ -19,7 +19,7 @@ int ignisGenerateBuffer(IgnisBuffer* buffer, GLenum target)
 		glGenBuffers(1, &name);
 		break;
 	default:
-		_ignisErrorCallback(IGNIS_WARN, "[Buffer] Unsupported buffer target (%d)", buffer->target);
+		_ignisErrorCallback(IGNIS_ERROR, "[Buffer] Unsupported buffer target (%d)", buffer->target);
 		return IGNIS_FAILURE;
 	}
 
@@ -91,7 +91,7 @@ void ignisDeleteBuffer(IgnisBuffer* buffer)
 		glDeleteBuffers(1, &buffer->name);
 		break;
 	default:
-		_ignisErrorCallback(IGNIS_WARN, "[Buffer] Unsupported buffer target (%d)", buffer->target);
+		_ignisErrorCallback(IGNIS_ERROR, "[Buffer] Unsupported buffer target (%d)", buffer->target);
 	}
 
 	buffer->name = 0;
@@ -102,7 +102,7 @@ void ignisBindBuffer(IgnisBuffer* buffer, GLenum target)
 {
 	if (buffer && buffer->target != target)
 	{
-		_ignisErrorCallback(IGNIS_WARN, "[Buffer] Buffer target missmatch (%d)", target);
+		_ignisErrorCallback(IGNIS_ERROR, "[Buffer] Buffer target missmatch (%d)", target);
 		return;
 	}
 
@@ -121,7 +121,7 @@ void ignisBindBuffer(IgnisBuffer* buffer, GLenum target)
 		return;
 	}
 
-	_ignisErrorCallback(IGNIS_WARN, "[Buffer] Unsupported buffer target (%d)", target);
+	_ignisErrorCallback(IGNIS_ERROR, "[Buffer] Unsupported buffer target (%d)", target);
 }
 
 void ignisBufferData(IgnisBuffer* buffer, GLsizeiptr size, const void* data, GLenum usage)
@@ -140,7 +140,7 @@ void ignisElementBufferData(IgnisBuffer* buffer, GLsizei count, const GLuint* da
 {
 	if (buffer->target != GL_ELEMENT_ARRAY_BUFFER)
 	{
-		_ignisErrorCallback(IGNIS_WARN, "[Buffer] Buffer target is not GL_ELEMENT_ARRAY_BUFFER");
+		_ignisErrorCallback(IGNIS_ERROR, "[Buffer] Buffer target is not GL_ELEMENT_ARRAY_BUFFER");
 		return;
 	}
 
@@ -152,7 +152,7 @@ void ignisBindImageTexture(IgnisBuffer* buffer, GLuint unit, GLenum access, GLen
 {
 	if (buffer->target != GL_TEXTURE_BUFFER)
 	{
-		_ignisErrorCallback(IGNIS_WARN, "[Buffer] Buffer target is not GL_TEXTURE_BUFFER");
+		_ignisErrorCallback(IGNIS_ERROR, "[Buffer] Buffer target is not GL_TEXTURE_BUFFER");
 		return;
 	}
 
@@ -163,7 +163,7 @@ void ignisRenderBufferStorage(IgnisBuffer* buffer, GLenum format, GLsizei width,
 {
 	if (buffer->target != GL_RENDERBUFFER)
 	{
-		_ignisErrorCallback(IGNIS_WARN, "[Buffer] Buffer target is not GL_RENDERBUFFER");
+		_ignisErrorCallback(IGNIS_ERROR, "[Buffer] Buffer target is not GL_RENDERBUFFER");
 		return;
 	}
 

@@ -18,7 +18,6 @@ typedef struct
 typedef struct
 {
     GLuint name;
-    GLuint vertex_attrib_index;
 
     /* dynamic buffer array */
     IgnisBuffer* array_buffers;
@@ -35,7 +34,7 @@ void ignisDeleteVertexArray(IgnisVertexArray* vao);
 void ignisBindVertexArray(IgnisVertexArray* vao);
 
 int ignisAddArrayBuffer(IgnisVertexArray* vao, GLsizeiptr size, const void* data, GLenum usage);
-int ignisAddArrayBufferLayout(IgnisVertexArray* vao, GLsizeiptr size, const void* data, GLenum usage, IgnisBufferElement* layout, size_t count);
+int ignisAddArrayBufferLayout(IgnisVertexArray* vao, GLsizeiptr size, const void* data, GLenum usage, GLuint vertex_attrib_index, IgnisBufferElement* layout, size_t count);
 int ignisLoadElementBuffer(IgnisVertexArray* vao, GLuint* indices, GLsizei count, GLenum usage);
 
 #ifdef __cplusplus

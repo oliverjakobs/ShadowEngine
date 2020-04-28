@@ -21,7 +21,7 @@ _Primitives2DLines* _Primitives2DLinesCreate(const char* vert, const char* frag,
 	if (lines)
 	{
 		ignisGenerateVertexArray(&lines->vao);
-		ignisAddArrayBufferLayout(&lines->vao, PRIMITIVES2D_LINES_BUFFER_SIZE * sizeof(float), NULL, GL_DYNAMIC_DRAW, layout, layout_size);
+		ignisAddArrayBufferLayout(&lines->vao, PRIMITIVES2D_LINES_BUFFER_SIZE * sizeof(float), NULL, GL_DYNAMIC_DRAW, 0, layout, layout_size);
 
 		lines->vertices = (float*)malloc(PRIMITIVES2D_LINES_BUFFER_SIZE * sizeof(float));
 		lines->vertex_count = 0;
@@ -94,7 +94,7 @@ _Primitives2DTriangles* _Primitives2DTrianglesCreate(const char* vert, const cha
 	if (triangles)
 	{
 		ignisGenerateVertexArray(&triangles->vao);
-		ignisAddArrayBufferLayout(&triangles->vao, PRIMITIVES2D_TRIANGLES_BUFFER_SIZE * sizeof(float), NULL, GL_DYNAMIC_DRAW, layout, layout_size);
+		ignisAddArrayBufferLayout(&triangles->vao, PRIMITIVES2D_TRIANGLES_BUFFER_SIZE * sizeof(float), NULL, GL_DYNAMIC_DRAW, 0, layout, layout_size);
 
 		triangles->vertices = (float*)malloc(PRIMITIVES2D_TRIANGLES_BUFFER_SIZE * sizeof(float));
 		triangles->vertex_count = 0;

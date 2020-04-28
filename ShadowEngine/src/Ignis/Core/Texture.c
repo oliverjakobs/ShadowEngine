@@ -26,6 +26,25 @@ int ignisGenerateTexture2D(IgnisTexture2D* texture, int width, int height, void*
 	return IGNIS_FAILURE;
 }
 
+int ignisGenerateTexStorage2D(IgnisTexture2D* texture, int width, int height, GLenum internal_format)
+{
+	if (texture)
+	{
+		glGenTextures(1, &texture->name);
+		glBindTexture(GL_TEXTURE_2D, texture->name);
+		glTexStorage2D(GL_TEXTURE_2D, 8, internal_format, width, height);
+
+		texture->width = width;
+		texture->height = height;
+		texture->rows = 1;
+		texture->columns = 1;
+
+		return texture->name;
+	}
+
+	return IGNIS_FAILURE;
+}
+
 int ignisCreateTexture2D(IgnisTexture2D* texture, const char* path, GLuint rows, GLuint columns, int flip_on_load, IgnisTextureConfig* configptr)
 {
 	if (!texture) return IGNIS_FAILURE;

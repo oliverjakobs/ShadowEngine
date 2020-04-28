@@ -6,7 +6,7 @@ int ignisCreateQuad(IgnisQuad* quad, GLfloat* vertices, size_t vertex_count, GLe
 {
 	if (ignisGenerateVertexArray(&quad->vao) == IGNIS_SUCCESS)
 	{
-		if (ignisAddArrayBufferLayout(&quad->vao, sizeof(GLfloat) * vertex_count, vertices, usage, layout, layout_size) == IGNIS_FAILURE)
+		if (ignisAddArrayBufferLayout(&quad->vao, sizeof(GLfloat) * vertex_count, vertices, usage, 0, layout, layout_size) == IGNIS_FAILURE)
 			return IGNIS_FAILURE;
 
 		quad->vertex_count = vertex_count;

@@ -18,7 +18,7 @@ int ignisGenerateFrameBuffer(IgnisFrameBuffer* fbo, int width, int height)
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
-		_ignisErrorCallback(IGNIS_CRITICAL, "[Framebuffer] Framebuffer is not complete!");
+		_ignisErrorCallback(IGNIS_ERROR, "[Framebuffer] Framebuffer is not complete!");
 		ignisDeleteFrameBuffer(fbo);
 		return IGNIS_FAILURE;
 	}

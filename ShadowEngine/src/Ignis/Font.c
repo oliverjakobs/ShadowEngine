@@ -41,7 +41,7 @@ int ignisCreateFontConfig(IgnisFont* font, const char* path, float size, int fir
 		return 0;
 	}
 
-	stbtt_BakeFontBitmap(buffer, 0, size, bitmap, bitmap_width, bitmap_height, font->first_char, font->num_chars, font->char_data); // no guarantee this fits!
+	stbtt_BakeFontBitmap(buffer, 0, size, bitmap, bitmap_width, bitmap_height, font->first_char, font->num_chars, font->char_data);
 
 	free(buffer);
 

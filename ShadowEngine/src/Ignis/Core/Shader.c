@@ -108,7 +108,8 @@ GLint ignisGetUniformLocation(const IgnisShader* shader, const char* name)
 {
 	GLint location = glGetUniformLocation(shader->program, name);
 
-	// if (location < 0) _ignisErrorCallback(IGNIS_WARN, "[SHADER] Uniform %s not found", name);
+	if (location < 0) 
+		_ignisErrorCallback(IGNIS_WARN, "[SHADER] Uniform %s not found", name);
 
 	return location;
 }

@@ -9,11 +9,12 @@ int ignisGenerateVertexArray(IgnisVertexArray* vao)
 	glGenVertexArrays(1, &vao->name);
 	glBindVertexArray(vao->name);
 
-	vao->vertex_attrib_index = 0;
-
 	vao->array_buffers = (IgnisBuffer*)malloc(IGNIS_BUFFER_ARRAY_INITIAL_SIZE * sizeof(IgnisBuffer));
-
-	if (!vao->array_buffers) return IGNIS_FAILURE;
+	if (!vao->array_buffers)
+	{
+		_ignisErrorCallback(IGNIS_ERROR, "[VertexArray] Failed to allocate memeory for array buffers");
+		return IGNIS_FAILURE;
+	}
 
 	vao->array_buffer_capacity = IGNIS_BUFFER_ARRAY_INITIAL_SIZE;
 	vao->array_buffer_count = 0;
@@ -56,7 +57,7 @@ int _ignisInsertArrayBuffer(IgnisVertexArray* vao, IgnisBuffer* buffer)
 
 		if (!temp)
 		{
-			_ignisErrorCallback(IGNIS_ERROR, "[VAO] Failed to grow dynamic buffer array");
+			_ignisErrorCallback(IGNIS_ERROR, "[VertexArray] Failed to grow dynamic buffer array");
 			return IGNIS_FAILURE;
 		}
 
@@ -75,17 +76,22 @@ int ignisAddArrayBuffer(IgnisVertexArray* vao, GLsizeiptr size, const void* data
 	if (ignisGenerateArrayBuffer(&buffer, size, data, usage) == IGNIS_SUCCESS)
 		return _ignisInsertArrayBuffer(vao, &buffer);
 
+	_ignisErrorCallback(IGNIS_ERROR, "[VertexArray] Failed to generate array buffer");
+
 	return IGNIS_FAILURE;
 }
 
-int ignisAddArrayBufferLayout(IgnisVertexArray* vao, GLsizeiptr size, const void* data, GLenum usage, IgnisBufferElement* layout, size_t count)
+int ignisAddArrayBufferLayout(IgnisVertexArray* vao, GLsizeiptr size, const void* data, GLenum usage, GLuint vertex_attrib_index, IgnisBufferElement* layout, size_t count)
 {
 	ignisBindVertexArray(vao);
 
 	IgnisBuffer buffer;
 
 	if (ignisGenerateArrayBuffer(&buffer, size, data, usage) == IGNIS_FAILURE)
+	{
+		_ignisErrorCallback(IGNIS_ERROR, "[VertexArray] Failed to generate array buffer");
 		return IGNIS_FAILURE;
+	}
 
 	if (_ignisInsertArrayBuffer(vao, &buffer) == IGNIS_FAILURE)
 		return IGNIS_FAILURE;
@@ -99,11 +105,11 @@ int ignisAddArrayBufferLayout(IgnisVertexArray* vao, GLsizeiptr size, const void
 	unsigned offset = 0;
 	for (size_t i = 0; i < count; i++)
 	{
-		glEnableVertexAttribArray(vao->vertex_attrib_index);
-		glVertexAttribPointer(vao->vertex_attrib_index, layout[i].count, layout[i].type, layout[i].normalized ? GL_TRUE : GL_FALSE, stride, (const void*)(intptr_t)offset);
+		glEnableVertexAttribArray(vertex_attrib_index);
+		glVertexAttribPointer(vertex_attrib_index, layout[i].count, layout[i].type, layout[i].normalized ? GL_TRUE : GL_FALSE, stride, (const void*)(intptr_t)offset);
 
 		offset += ignisGetOpenGLTypeSize(layout[i].type) * layout[i].count;
-		vao->vertex_attrib_index++;
+		vertex_attrib_index++;
 	}
 
 	return IGNIS_SUCCESS;
@@ -116,5 +122,6 @@ int ignisLoadElementBuffer(IgnisVertexArray* vao, GLuint* indices, GLsizei count
 		vao->element_count = count;
 		return IGNIS_SUCCESS;
 	}
+	_ignisErrorCallback(IGNIS_ERROR, "[VertexArray] Failed to generate element buffer");
 	return IGNIS_FAILURE;
 }

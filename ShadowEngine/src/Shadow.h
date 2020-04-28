@@ -32,7 +32,8 @@ typedef struct
 
 	IgnisFrameBuffer scene_buffer;
 
-	IgnisQuad quad;
+	IgnisQuad light_quad;
+	IgnisQuad full_quad;
 
 	/* opengl state backup */
 	GLint backup_viewport[4];

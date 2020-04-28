@@ -26,7 +26,7 @@ void FontRendererInit(const char* vert, const char* frag)
 	ignisGenerateVertexArray(&_render_data.vao);
 
 	IgnisBufferElement layout[] = { {GL_FLOAT, 4, GL_FALSE} };
-	ignisAddArrayBufferLayout(&_render_data.vao, FONTRENDERER_BUFFER_SIZE * sizeof(float), NULL, GL_DYNAMIC_DRAW, layout, 1);
+	ignisAddArrayBufferLayout(&_render_data.vao, FONTRENDERER_BUFFER_SIZE * sizeof(float), NULL, GL_DYNAMIC_DRAW, 0, layout, 1);
 
 	GLuint indices[FONTRENDERER_INDEX_COUNT];
 	GenerateIndices(indices, FONTRENDERER_INDEX_COUNT, FONTRENDERER_INDICES_PER_QUAD);

@@ -31,7 +31,7 @@ void BatchRenderer2DInit(const char* vert, const char* frag)
 		{GL_FLOAT, 1, GL_FALSE}		/* Texture index */
 	};
 
-	ignisAddArrayBufferLayout(&_render_data.vao, BATCHRENDERER2D_BUFFER_SIZE * sizeof(float), NULL, GL_DYNAMIC_DRAW, layout, 3);
+	ignisAddArrayBufferLayout(&_render_data.vao, BATCHRENDERER2D_BUFFER_SIZE * sizeof(float), NULL, GL_DYNAMIC_DRAW, 0, layout, 3);
 
 	GLuint indices[BATCHRENDERER2D_INDEX_COUNT];
 	GenerateIndices(indices, BATCHRENDERER2D_INDEX_COUNT, BATCHRENDERER2D_INDICES_PER_QUAD);

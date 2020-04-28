@@ -15,7 +15,6 @@ typedef struct
 	GLuint work_group_size[3];
 } IgnisComputeShader;
 
-
 int ignisCreateComputeShader(IgnisComputeShader* shader, const char* path);
 int ignisCreateComputeShaderSrc(IgnisComputeShader* shader, const char* src);
 void ignisDeleteComputeShader(IgnisComputeShader* shader);
